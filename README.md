@@ -1,7 +1,7 @@
 # Image-Checker
 Image Checker: Zen Cart Admin tool
 
-Originally forked from Missing Images but I decided to revise it completely and also (future) integrate other imge checking plugins.
+Originally forked from Missing Images but I decided to revise it completely and also (future) integrate other image checking plugins.
 Very much a work in progress but wont destroy anything!
 
 //////////////////////////////
