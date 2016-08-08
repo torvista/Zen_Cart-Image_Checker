@@ -1,23 +1,24 @@
 <?php
-/**
- * Missing Images Admin Page Registration.
+// Plugin: Image Checker
+/* Image Checker Admin Page Registration.
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
+ * heavily based on CEON Conor Kerr code
  */
 if (!defined('IS_ADMIN_FLAG')) {
     die('Illegal Access');
 }
 
-$this_mod_name 	= "Missing Images";
-$this_mod_box_tools_define = 'BOX_TOOLS_MISSING_IMAGES';
-$this_mod_filename_define = 'FILENAME_MISSING_IMAGES';
-$this_mod_page_key	= "toolsMissingImages";
+$this_mod_name 	= "Image Checker";
+$this_mod_box_tools_define = 'BOX_TOOLS_IMAGE_CHECKER';
+$this_mod_filename_define = 'FILENAME_IMAGE_CHECKER';
+$this_mod_page_key	= "toolsImageChecker";
 $this_mod_file_list = array(
-				  "missing_images.php",
-				  "includes/extra_datafiles/missing_images.php",
-				  "includes/languages/english/missing_images.php",
-				  "includes/languages/english/extra_definitions/missing_images.php"
+				  "image_checker.php",
+				  "includes/extra_datafiles/image_checker.php",
+				  "includes/languages/english/image_checker.php",
+				  "includes/languages/english/extra_definitions/image_checker.php"
 			  	);
-$this_file 		= "includes/functions/extra_functions/register_missing_images.php";
+$this_file 		= "includes/functions/extra_functions/register_image_checker.php";
 
 $style_error 	= "background: pink; border: 1px solid red; margin: 1em; padding: 0.4em;";
 $style_success 	= "background: palegreen; border: 1px solid black; margin: 1em; padding: 0.4em;";

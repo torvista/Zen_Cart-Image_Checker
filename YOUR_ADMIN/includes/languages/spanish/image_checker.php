@@ -1,6 +1,6 @@
 <?php
-/** Plugin: Image Checker - Spanish
- */
+// Plugin: Image Checker
+// Spanish
 
 define('HEADING_TITLE', 'Comprobar Imágenes');
 define('TEXT_VERSION', 'versión ');
@@ -27,5 +27,3 @@ define('TABLE_HEADING_STATUS', 'Estado');
 define('TABLE_HEADING_NAME', 'Nombre');
 define('TABLE_HEADING_IMAGE', 'Imagen');
 define('TABLE_HEADING_RESULT', 'Resultado');
-
-

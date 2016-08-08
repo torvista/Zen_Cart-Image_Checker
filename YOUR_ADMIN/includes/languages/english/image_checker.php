@@ -1,8 +1,8 @@
 <?php
-/** Plugin: Image Checker - English
- */
+// Plugin: Image Checker
+// English
 
-define('HEADING_TITLE', 'Missing Images Checker');
+define('HEADING_TITLE', 'Images Checker');
 define('TEXT_VERSION', 'version ');
 define('TEXT_IMAGES_DIRECTORY','Images path: '. DIR_FS_CATALOG_IMAGES);
 
@@ -15,7 +15,7 @@ define('TEXT_NO_ERRORS_FOUND', 'There were no image errors found. All products w
 
 define('ERROR_NO_ERROR', 'ok');
 define('ERROR_NO_IMAGE_DEFINED', 'No image defined');
-define('ERROR_IMAGE_NOT_FOUND', 'Missing');
+define('ERROR_IMAGE_NOT_FOUND', 'Image not found');
 define('ERROR_NOT_IMAGE', 'File is named as a <b>%s</b> but is not a valid image (as per getimagesize)');
 define('ERROR_IMAGE_FORMAT', 'Image is named with a <b>%s</b> extension but is actually a <b>%s</b>!');
 define('ERROR_NOT_COMMON_FORMAT', 'A <b>%s</b> file is not a type commonly used for web images (change to PNG/GIF/JPG or even BMP).');
@@ -27,5 +27,4 @@ define('TABLE_HEADING_STATUS', 'Status');
 define('TABLE_HEADING_NAME', 'Name');
 define('TABLE_HEADING_IMAGE', 'Image');
 define('TABLE_HEADING_RESULT', 'Result');
-
 

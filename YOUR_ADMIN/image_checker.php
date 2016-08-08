@@ -1,5 +1,6 @@
 <?php
-/*
+// Plugin: Image Checker
+/* based on...
  * Missing Images Checker for ZenCart
  * By Paul Williams (retched)
  * additions by Zen4All and torvista
@@ -33,9 +34,9 @@
 //
 // Also note **NO CHANGES ARE MADE TO YOUR DATABASE**. This script is read only.
 
-$limit = 20;//digit (no quotation marks) or false/0. Limit the results for easier debugging.
+$limit = 0;//digit (no quotation marks) or false/0. Limit the results for easier debugging.
 
-define('MISSING_IMAGES_VERSION', '2.0');
+define('IMAGE_CHECKER_VERSION', '1.0');
 
 //////////////////////////////////////////////////////////////
 require('includes/application_top.php');
@@ -262,7 +263,7 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
         <?php } ?>
     </div>
     <div>
-        <?php echo zen_draw_form('set_list_all', FILENAME_MISSING_IMAGES, zen_get_all_get_params(array('listAllProducts'), 'get')); ?>
+        <?php echo zen_draw_form('set_list_all', FILENAME_IMAGE_CHECKER, zen_get_all_get_params(array('listAllProducts'), 'get')); ?>
         <label for="listAllProducts">List all products</label>
         <?php echo zen_draw_checkbox_field('listAllProducts', '1', $list_all_products, '', 'id="listAllProducts" onchange="this.form.submit();"'); ?>
         </form>
