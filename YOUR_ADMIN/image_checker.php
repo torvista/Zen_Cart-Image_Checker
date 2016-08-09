@@ -109,7 +109,9 @@ $products_result = $db->Execute($products_query_raw);
 //echo $products_query.'<br />'.'results='.count($products_result).'<br />';
 //echo '<pre>';echo print_r($products_result);'</pre>';
 $products_info = array();
-foreach ($products_result as $row) {
+
+//php 5.5.32 gives mysqli error
+/*foreach ($products_result as $row) {
     $results_counter++;
     $products_info[] = array(
         "entry" => $results_counter,
@@ -119,9 +121,18 @@ foreach ($products_result as $row) {
         "status" => $row['products_status'],
         "name" => $row['products_name']
     );
-
+}*/
+while (!$products_result->EOF) {
+    $results_counter++;
+    $products_info[] = array(
+        "entry" => $results_counter,
+        "id" => $products_result->fields['products_id'],
+        "model" => $products_result->fields['products_model'],
+        "image" => $products_result->fields['products_image'],
+        "status" => $products_result->fields['products_status'],
+        "name" => $products_result->fields['products_name']);
+    $products_result->MoveNext();
 }
-
 //echo __LINE__ . ': <pre>';echo print_r($products_info);echo '</pre>';
 /*
 * iterate over each product:
