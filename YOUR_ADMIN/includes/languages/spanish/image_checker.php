@@ -6,6 +6,8 @@ define('HEADING_TITLE', 'Comprobar Imágenes');
 define('TEXT_VERSION', 'versión ');
 define('TEXT_IMAGES_DIRECTORY','Carpeta Imágenes: '. DIR_FS_CATALOG_IMAGES);
 
+define('TEXT_LIST_ALL_PRODUCTS', 'Mostrar Todos los Productos:');
+define('TEXT_LIST_DISABLED_PRODUCTS', 'Mostrar los Productos Deshabilitados También:');
 define('TEXT_PRODUCTS_CHECKED', 'Productos comprobados: ');
 define('TEXT_IMAGE_PROBLEMS', 'Problemas con imágenes: ');
 define('TEXT_QUERY_LIMITED', 'Resultados limitados a <b>%s</b> productos.</b>');

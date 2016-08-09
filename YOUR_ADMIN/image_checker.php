@@ -1,26 +1,14 @@
 <?php
 // Plugin: Image Checker
-/* based on...
+
+define('IMAGE_CHECKER_VERSION', '1.0');
+
+/* originally based on
  * Missing Images Checker for ZenCart
- * By Paul Williams (retched)
- * additions by Zen4All and torvista
- * @copyright Portions Copyright 2004-2014 Zen Cart Team
-****************************************************************************
-    Copyright (C) 2014  Paul Williams/IWL Entertainment
+ * By Paul Williams (retched) with additions by Zen4All
+ *...but radically butchered by torvista
+ */
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-****************************************************************************/
 // This file reads the image link path associated with each product and
 // a) checks if anything is defined
 // b) if defined, checks if the file referenced exists, if it is an image, if it is named correctly and if it is a common file type.
@@ -32,11 +20,7 @@
 // you should also probably run this on a dedicated server or a local testing
 // server as opposed to online.
 //
-// Also note **NO CHANGES ARE MADE TO YOUR DATABASE**. This script is read only.
-
-$limit = 0;//digit (no quotation marks) or false/0. Limit the results for easier debugging.
-
-define('IMAGE_CHECKER_VERSION', '1.0');
+// Also note that **NO CHANGES ARE MADE TO YOUR DATABASE**. This script is read-only.
 
 //////////////////////////////////////////////////////////////
 require('includes/application_top.php');
@@ -72,31 +56,72 @@ IMAGETYPE_BMP=6
 ///////////////////////////////////////////////////////////////////////////
 
 //get value of checkbox to show all products or only those with image issues
-$list_all_products = (isset ($_POST['listAllProducts']) || isset ($_GET['listAllProducts']) ? true : false);
+//echo '$_GET[\'listAllProducts\']=' . $_GET['listAllProducts'] . '<br />';
+//echo '$_POST[\'listAllProducts\']=' . $_POST['listAllProducts'] . '<br />';
 
-// Get an array of all products in the database: product name, product id, product model and product image fields.
-// The product image and product id are stored in TABLE_PRODUCTS.
-// The product names are stored in the TABLE_PRODUCTS_DESCRIPTION table. So a LEFT JOIN will be used.
-$limit_clause = ($limit ? ' LIMIT ' . (int)$limit : '');//for debugging a smaller result set
-$products_query = "SELECT p.products_id, p.products_model, p.products_image, p.products_status, pd.products_name
+$list_all_products = (isset ($_GET['listAllProducts']) ? true : false);
+//$list_all_products = true;//override
+//echo '$list_all_products=' . $list_all_products . '<br />';
+
+//get value of checkbox to show disabled products too (if not a full listing)
+$list_disabled = (isset ($_GET['listDisabled']) ? true : false);
+//echo '$list_disabled=' . $list_disabled . '<br />';
+
+if (!$list_all_products) {//if only errors selected, allow filtering by product status
+    $list_disabled_clause = ($list_disabled ? ' ' : ' AND p.products_status = 1 ');//if checkbox ticked, no filter
+}
+//for debugging a smaller result set, legacy code pre-pagination
+
+//echo '$_POST[\'limitSearch\']='.$_POST['limitSearch'].'<br />';
+/*get value of limit to reduce search for debugging etc.
+if (isset($_POST['limitSearch']) && $_POST['limitSearch'] != '') {
+    $limit_search = (int)$_POST['limitSearch'];
+    echo __LINE__ . ': $limit_search=' . $limit_search . '<br />';
+}
+
+*/
+//$limit_clause = ($limit_search ? ' LIMIT ' . $limit_search : '');//
+/*$products_query_raw = "SELECT p.products_id, p.products_model, p.products_image, p.products_status, pd.products_name
                  FROM " . TABLE_PRODUCTS . " p
                  LEFT JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON p.products_id = pd.products_id
-                 WHERE pd.language_id = " . (int)$_SESSION['languages_id'] . " ORDER BY p.products_id" . $limit_clause;
+                 WHERE pd.language_id = " . (int)$_SESSION['languages_id'] . $list_disabled_clause . " ORDER BY p.products_id" . $limit_clause;
+*/
 
-$products_result = $db->Execute($products_query);
-//$products_result = '';//test no products
+$products_query_raw = "SELECT p.products_id, p.products_model, p.products_image, p.products_status, pd.products_name
+                 FROM " . TABLE_PRODUCTS . " p
+                 LEFT JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON p.products_id = pd.products_id
+                 WHERE pd.language_id = " . (int)$_SESSION['languages_id'] . $list_disabled_clause . " ORDER BY p.products_model";
 
+if ($list_all_products) {//if only errors selected, allow filtering by product status
+
+    if (isset($_GET['page']) && ($_GET['page'] > 1)) $rows = $_GET['page'] * MAX_DISPLAY_SEARCH_RESULTS - MAX_DISPLAY_SEARCH_RESULTS;
+
+    echo __LINE__ . ': $products_query_raw=' . $products_query_raw . '<br />';
+    $products_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $products_query_raw, $products_query_numrows);
+    $results_counter = (($_GET['page'] - 1) * MAX_DISPLAY_SEARCH_RESULTS);
+} else {
+    $results_counter = 1;
+}
+//echo __LINE__ . ': $products_query_raw=' . $products_query_raw . '<br />';
+
+$products_result = $db->Execute($products_query_raw);
+
+//echo $products_query.'<br />'.'results='.count($products_result).'<br />';
 //echo '<pre>';echo print_r($products_result);'</pre>';
 $products_info = array();
 foreach ($products_result as $row) {
+    $results_counter++;
     $products_info[] = array(
+        "entry" => $results_counter,
         "id" => $row['products_id'],
         "model" => $row['products_model'],
         "image" => $row['products_image'],
         "status" => $row['products_status'],
         "name" => $row['products_name']
     );
+
 }
+
 //echo __LINE__ . ': <pre>';echo print_r($products_info);echo '</pre>';
 /*
 * iterate over each product:
@@ -106,7 +131,7 @@ foreach ($products_result as $row) {
  *      3. Determine if the image is stored in the correct format. (An image with 
  *         a .PNG should register as a PNG.)
  */
-
+$error_count = 0;
 foreach ($products_info as $key => &$product) {//add $product['image_status'] and $product['error'] into array
 //$product['image_status']
 //0 - file exists and is good
@@ -120,9 +145,11 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
     if ($product['image'] == '') {
         $product['image_status'] = 1;
         $product['error'] = ERROR_NO_IMAGE_DEFINED;
+        $error_count++;
     } elseif (!file_exists($file)) {
         $product['image_status'] = 4;
         $product['error'] = ERROR_IMAGE_NOT_FOUND;
+        $error_count++;
     } else {
 
         $image_check = getimagesize($file); // getimagesize returns 0 => height, 1 => width, and 2 => type.
@@ -136,26 +163,32 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
         if (!$image_type) {//getimagesize does not recognise this as an image
             $product['error'] = sprintf(ERROR_NOT_IMAGE, $file_ext);
             $product['image_status'] = 3;
+            $error_count++;
 
         } elseif (!in_array($image_type, array(IMAGETYPE_GIF, IMAGETYPE_JPEG, IMAGETYPE_PNG, IMAGETYPE_BMP))) {//The image found is not one of the common web types
             $product['error'] = sprintf(ERROR_NOT_COMMON_FORMAT, $file_ext);
             $product['image_status'] = 2;
+            $error_count++;
 
         } elseif ($file_ext == "gif" && $image_type != IMAGETYPE_GIF) {//image extension = GIF, but it isn't
             $product['error'] = sprintf(ERROR_IMAGE_FORMAT, $file_ext, $getimagesize_types[$image_type]);
             $product['image_status'] = 3;
+            $error_count++;
 
         } elseif ((in_array($file_ext, array("jpg", "jpeg", "jpe", "jfif", "jif")) && $image_type != IMAGETYPE_JPEG)) {//image extension = JPEG-type, but it isn't
             $product['error'] = sprintf(ERROR_IMAGE_FORMAT, $file_ext, $getimagesize_types[$image_type]);
             $product['image_status'] = 3;
+            $error_count++;
 
         } elseif ($file_ext == "png" && $image_type != IMAGETYPE_PNG) {//image extension = PNG, but it isn't
             $product['error'] = sprintf(ERROR_IMAGE_FORMAT, $file_ext, $getimagesize_types[$image_type]);
             $product['image_status'] = 3;
+            $error_count++;
 
         } elseif ($file_ext == "bmp" && $image_type != IMAGETYPE_BMP) {//image extension = BMP, but it isn't
             $product['error'] = sprintf(ERROR_IMAGE_FORMAT, $file_ext, $getimagesize_types[$image_type]);
             $product['image_status'] = 3;
+            $error_count++;
 
         } else {//its valid
             if (!$list_all_products) {
@@ -188,6 +221,7 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
                 var kill = document.getElementById('hoverJS');
                 kill.disabled = true;
             }
+            alternate('resultsTable');
         }
         // -->
     </script>
@@ -253,21 +287,35 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
 <!-- header_eof //-->
 <!-- body //-->
 <div id="body">
-    <div><h1><?php echo HEADING_TITLE . ' - ' . TEXT_VERSION . MISSING_IMAGES_VERSION; ?></h1>
+    <div><h1><?php echo HEADING_TITLE . ' - ' . TEXT_VERSION . IMAGE_CHECKER_VERSION; ?></h1>
         <p><?php echo TEXT_IMAGES_DIRECTORY; ?></p>
 
         <?php if (sizeof($products_info) > 0) { ?>
 
-        <?php if ($limit) { ?>
-            <p class="messageStackCaution"><?php echo sprintf(TEXT_QUERY_LIMITED, $limit); ?></p>
-        <?php } ?>
     </div>
     <div>
-        <?php echo zen_draw_form('set_list_all', FILENAME_IMAGE_CHECKER, zen_get_all_get_params(array('listAllProducts'), 'get')); ?>
-        <label for="listAllProducts">List all products</label>
+        <?php echo zen_draw_form('options', FILENAME_IMAGE_CHECKER, zen_get_all_get_params(array('listAllProducts', 'listDisabled')), 'get'); ?>
+        <label for="listAllProducts"><?php echo TEXT_LIST_ALL_PRODUCTS; ?></label>
         <?php echo zen_draw_checkbox_field('listAllProducts', '1', $list_all_products, '', 'id="listAllProducts" onchange="this.form.submit();"'); ?>
+        <?php if (!$list_all_products) {//do not show filter if listing all products anyway ?>
+            <label for="listDisabled"><?php echo TEXT_LIST_DISABLED_PRODUCTS; ?></label>
+            <?php echo zen_draw_checkbox_field('listDisabled', '1', $list_disabled, '', 'id="listDisabled" onchange="this.form.submit();"');
+        } ?>
+        <!--
+        <label for="limitResults">Limit search</label>
+        <?php //echo zen_draw_input_field('limitSearch', $limit_search, ($limit_search ? 'class="messageStackCaution"' : ''), 'id="limitSearch" onblur="this.form.submit();"'); ?>-->
         </form>
     </div>
+    <?php
+    if ($list_all_products) { ?>
+        <div style="float: right">
+            <?php echo $products_split->display_count($products_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_PRODUCTS);
+            echo $products_split->display_links($products_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page'], zen_get_all_get_params(array('page'))); ?>
+        </div>
+    <?php } ?>
+
+    <div><p><?php echo TEXT_IMAGE_PROBLEMS . $error_count; ?></p></div>
+
     <div>
         <table id="resultsTable">
             <tr class="tableHeading">
@@ -281,13 +329,9 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
             </tr>
 
             <?php
-            // Initialise row counters
-            $count = 0;
-            $error_count = 0;
             //echo __LINE__ . ': <pre>';echo print_r($products_info);echo '</pre>';
 
             foreach ($products_info as &$product) {
-                $count++;
                 //echo __LINE__ . ': <pre>';echo print_r($product);echo '</pre>';
 
                 switch ($product['image_status']) {
@@ -296,26 +340,22 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
                         break;
                     case (1)://no image defined
                         $errorclass = "undefined";
-                        $error_count++;
                         break;
                     case (2)://image exists but type not browser friendly
                         $errorclass = "uncommon";
-                        $error_count++;
                         break;
                     case (3)://image exists but does not match extension
                         $errorclass = "mismatch";
-                        $error_count++;
                         break;
                     case (4)://image missing
                         $errorclass = "missing";
-                        $error_count++;
                         break;
                     default:
                         $errorclass = "";
                 } ?>
 
-                <tr class="<?php echo($count % 2 === 0 ? "rowEven" : "rowOdd"); ?>">
-                    <td class="center"><?php echo $count; ?> </td>
+                <tr>
+                    <td class="center"><?php echo $product['entry']; ?> </td>
                     <td class="center"><?php echo $product['id']; ?> </td>
                     <td class="center" style="padding-right: 0"><?php
                         echo($product['status'] == '1' ?
@@ -334,9 +374,14 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
             <?php } ?>
         </table>
     </div>
+    <?php
+    if ($list_all_products) { ?>
+        <div style="float: right">
+            <?php echo $products_split->display_count($products_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], TEXT_DISPLAY_NUMBER_OF_PRODUCTS);
+            echo $products_split->display_links($products_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS, $_GET['page'], zen_get_all_get_params(array('page'))); ?>
+        </div>
+    <?php } ?>
     <div>
-        <p><?php echo TEXT_PRODUCTS_CHECKED . count($products_result); ?></p>
-        <p><?php echo TEXT_IMAGE_PROBLEMS . $error_count; ?></p>
 
         <?php } else { ?>
             <p><?php echo TEXT_NO_PRODUCTS_FOUND; ?></p>
@@ -347,6 +392,22 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
 <!-- footer //-->
 <?php require(DIR_WS_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
+<script>
+    function alternate(id) {
+        if (document.getElementsByTagName) {
+            var table = document.getElementById(id);
+            var rows = table.getElementsByTagName("tr");
+            for (var i = 1; i < rows.length; i++) {
+                //manipulate rows
+                if (i % 2 == 0) {
+                    rows[i].className = "rowEven";
+                } else {
+                    rows[i].className = "rowOdd";
+                }
+            }
+        }
+    }
+</script>
 </body>
 </html>
 <?php require(DIR_WS_INCLUDES . 'application_bottom.php'); ?>
