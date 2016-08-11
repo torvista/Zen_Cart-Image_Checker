@@ -6,8 +6,9 @@ define('HEADING_TITLE', 'Images Checker');
 define('TEXT_VERSION', 'version ');
 define('TEXT_IMAGES_DIRECTORY','Images path: '. DIR_FS_CATALOG_IMAGES);
 
-define('TEXT_LIST_ALL_PRODUCTS', 'List All Products:');
-define('TEXT_LIST_DISABLED_PRODUCTS', 'List Disabled Products Too:');
+define('TEXT_LIST_ALL_PRODUCTS', 'List all products:');
+define('TEXT_LIST_DISABLED_PRODUCTS', 'List disabled products:');
+define('TEXT_LIST_NO_IMAGES_PRODUCTS', 'List products with no images defined:');
 define('TEXT_PRODUCTS_CHECKED', 'Products checked: ');
 define('TEXT_IMAGE_PROBLEMS', 'Image problems: ');
 define('TEXT_QUERY_LIMITED', 'Results limited to <b>%s</b> products.</b>');

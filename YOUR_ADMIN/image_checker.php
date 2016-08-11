@@ -67,8 +67,14 @@ $list_all_products = (isset ($_GET['listAllProducts']) ? true : false);
 $list_disabled = (isset ($_GET['listDisabled']) ? true : false);
 //echo '$list_disabled=' . $list_disabled . '<br />';
 
+//get value of checkbox to show disabled products too (if not a full listing)
+$list_no_images = (isset ($_GET['listNoImages']) ? true : false);
+//echo '$list_no_images=' . $list_no_images . '<br />';
+
+
 if (!$list_all_products) {//if only errors selected, allow filtering by product status
     $list_disabled_clause = ($list_disabled ? ' ' : ' AND p.products_status = 1 ');//if checkbox ticked, no filter
+    $list_no_images_clause = ($list_no_images ? ' ' : ' AND p.products_image >"" ');//if checkbox ticked, no filter
 }
 //for debugging a smaller result set, legacy code pre-pagination
 
@@ -90,7 +96,7 @@ if (isset($_POST['limitSearch']) && $_POST['limitSearch'] != '') {
 $products_query_raw = "SELECT p.products_id, p.products_model, p.products_image, p.products_status, pd.products_name
                  FROM " . TABLE_PRODUCTS . " p
                  LEFT JOIN " . TABLE_PRODUCTS_DESCRIPTION . " pd ON p.products_id = pd.products_id
-                 WHERE pd.language_id = " . (int)$_SESSION['languages_id'] . $list_disabled_clause . " ORDER BY p.products_model";
+                 WHERE pd.language_id = " . (int)$_SESSION['languages_id'] . $list_disabled_clause . $list_no_images_clause . " ORDER BY p.products_model";
 
 if ($list_all_products) {//if only errors selected, allow filtering by product status
 
@@ -232,10 +238,11 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
                 var kill = document.getElementById('hoverJS');
                 kill.disabled = true;
             }
-            alternate('resultsTable');
+            alternate('resultsTable');//stripe the table rows
         }
         // -->
     </script>
+
     <style type="text/css">
         #body {
             padding: 0 1%;
@@ -248,15 +255,19 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
             line-height: 1.7em;
         }
 
-        #resultsTable th, #resultsTable td {
+        #resultsTable th {
+            padding: 2px 2px 2px 18px;
+        }
+
+        #resultsTable td {
             padding: 2px 8px;
         }
 
         #resultsTable .tableHeading {
             text-align: left;
             font-weight: bold;
-            color: #FFFFFF;
-            background: #000000;
+            color: white;
+            background: black;
         }
 
         #resultsTable .rowEven {
@@ -290,6 +301,46 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
             color: red;
             font-weight: bold;
         }
+
+        table.tablesorter .header,
+        table.tablesorter .tablesorter-header {
+            /* black double arrow */
+            background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==);
+            /* white double arrow */
+            /* background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAAP///////yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==); */
+            /* image */
+            /* background-image: url(black-bg.gif); */
+            background-repeat: no-repeat;
+            background-position: center left;
+            padding: 4px 20px 4px 4px;
+            cursor: pointer;
+        }
+
+        table.tablesorter th.headerSortUp,
+        table.tablesorter th.tablesorter-headerSortUp {
+            background-color: #8dbdd8;
+            /* black asc arrow */
+            background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7);
+            /* white asc arrow */
+            /* background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7); */
+            /* image */
+            /* background-image: url(black-asc.gif); */
+        }
+
+        table.tablesorter th.headerSortDown,
+        table.tablesorter th.tablesorter-headerSortDown {
+            background-color: #8dbdd8;
+            /* black desc arrow */
+            background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
+
+        /* white desc arrow */
+        /* background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7); */
+        /* image */
+        /* background-image: url(black-desc.gif); */
+
+        table.tablesorter tbody tr.alt-row td {
+            background-color: #E4E4E4;
+        }
     </style>
 </head>
 <body onLoad="init()">
@@ -298,6 +349,7 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
 <!-- header_eof //-->
 <!-- body //-->
 <div id="body">
+
     <div><h1><?php echo HEADING_TITLE . ' - ' . TEXT_VERSION . IMAGE_CHECKER_VERSION; ?></h1>
         <p><?php echo TEXT_IMAGES_DIRECTORY; ?></p>
 
@@ -310,7 +362,9 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
         <?php echo zen_draw_checkbox_field('listAllProducts', '1', $list_all_products, '', 'id="listAllProducts" onchange="this.form.submit();"'); ?>
         <?php if (!$list_all_products) {//do not show filter if listing all products anyway ?>
             <label for="listDisabled"><?php echo TEXT_LIST_DISABLED_PRODUCTS; ?></label>
-            <?php echo zen_draw_checkbox_field('listDisabled', '1', $list_disabled, '', 'id="listDisabled" onchange="this.form.submit();"');
+            <?php echo zen_draw_checkbox_field('listDisabled', '1', $list_disabled, '', 'id="listDisabled" onchange="this.form.submit();"'); ?>
+            <label for="listNoImages"><?php echo TEXT_LIST_NO_IMAGES_PRODUCTS; ?></label>
+            <?php echo zen_draw_checkbox_field('listNoImages', '1', $list_no_images, '', 'id="listNoImages" onchange="this.form.submit();"');
         } ?>
         <!--
         <label for="limitResults">Limit search</label>
@@ -329,16 +383,18 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
 
     <div>
         <table id="resultsTable">
-            <tr class="tableHeading">
+            <thead>
+            <tr class="dataTableHeadingRow">
                 <th class="center"><?php echo TABLE_HEADING_ENTRY; ?></th>
                 <th class="center"><?php echo TABLE_HEADING_ID; ?></th>
                 <th colspan="2"><?php echo TABLE_HEADING_STATUS; ?></th>
                 <th><?php echo TABLE_HEADING_MODEL; ?></th>
                 <th><?php echo TABLE_HEADING_NAME; ?></th>
                 <th><?php echo TABLE_HEADING_IMAGE; ?></th>
-                <th class="center"><?php echo TABLE_HEADING_RESULT; ?></th>
+                <th><?php echo TABLE_HEADING_RESULT; ?></th>
             </tr>
-
+            </thead>
+            <tbody>
             <?php
             //echo __LINE__ . ': <pre>';echo print_r($products_info);echo '</pre>';
 
@@ -365,7 +421,7 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
                         $errorclass = "";
                 } ?>
 
-                <tr>
+                <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">
                     <td class="center"><?php echo $product['entry']; ?> </td>
                     <td class="center"><?php echo $product['id']; ?> </td>
                     <td class="center" style="padding-right: 0"><?php
@@ -380,9 +436,10 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
                     <td style="white-space: nowrap"><?php echo $product['model']; ?></td>
                     <td><?php echo $product['name']; ?> </td>
                     <td><?php echo $product['image']; ?> </td>
-                    <td class="center <?php echo $errorclass; ?>"><?php echo $product['error']; ?></td>
+                    <td class="<?php echo $errorclass; ?>"><?php echo $product['error']; ?></td>
                 </tr>
             <?php } ?>
+            </tbody>
         </table>
     </div>
     <?php
@@ -403,6 +460,11 @@ foreach ($products_info as $key => &$product) {//add $product['image_status'] an
 <!-- footer //-->
 <?php require(DIR_WS_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
+<script type="text/javascript" src="includes/javascript/jquery.tablesorter.js"></script>
+<script type="text/javascript">$(document).ready(function () {
+        $("table").tablesorter();
+        //$("table").tablesorter({widgets: ["zebra"], widgetOptions: {zebra: ["normal-row", "alt-row"]}});//for stripming, not working with default mouseover highlighting
+    });</script>
 <script>
     function alternate(id) {
         if (document.getElementsByTagName) {

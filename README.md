@@ -70,7 +70,8 @@ v1.0 as Image Checker 2016 08
 	changed page to html5, removed obsolete tags, changed css to suit 1.55 admin pages
 	added products model to listing
 	moved all hard-coded text to language defines
-	added autosubmit checkbox to select listing of all products or only errors
+	added autosubmit checkboxs to select listing of all products or only errors +/- disabled products, +/- products with no images defined
+	added column sorting by jquery tablesorter
 	added pagination and corrected error counting
 	changed listing format
 	added edit button to product
