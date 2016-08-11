@@ -102,7 +102,7 @@ if ($list_all_products) {//if only errors selected, allow filtering by product s
 
     if (isset($_GET['page']) && ($_GET['page'] > 1)) $rows = $_GET['page'] * MAX_DISPLAY_SEARCH_RESULTS - MAX_DISPLAY_SEARCH_RESULTS;
 
-    echo __LINE__ . ': $products_query_raw=' . $products_query_raw . '<br />';
+    //echo __LINE__ . ': $products_query_raw=' . $products_query_raw . '<br />';
     $products_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $products_query_raw, $products_query_numrows);
     $results_counter = (($_GET['page'] - 1) * MAX_DISPLAY_SEARCH_RESULTS);
 } else {
