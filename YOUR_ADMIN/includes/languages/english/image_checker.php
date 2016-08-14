@@ -6,15 +6,19 @@ define('HEADING_TITLE', 'Images Checker');
 define('TEXT_VERSION', 'version ');
 define('TEXT_IMAGES_DIRECTORY','Images path: '. DIR_FS_CATALOG_IMAGES);
 
-define('TEXT_LIST_ALL_PRODUCTS', 'List all products:');
-define('TEXT_LIST_DISABLED_PRODUCTS', 'List disabled products:');
-define('TEXT_LIST_NO_IMAGES_PRODUCTS', 'List products with no images defined:');
-define('TEXT_PRODUCTS_CHECKED', 'Products checked: ');
+define('TEXT_LIST_TYPE', 'Check:');
+define('TEXT_CHECK_CATEGORIES', 'Categories');
+define('TEXT_CHECK_PRODUCTS', 'Products');
+define('TEXT_FILTERS', 'Filters:');
+define('TEXT_LIST_ALL', 'List all:');
+define('TEXT_LIST_DISABLED', 'List disabled:');
+define('TEXT_LIST_NO_IMAGES', 'List entries with no images defined:');
+define('TEXT_ENTRIES_CHECKED', 'Entries checked: ');
 define('TEXT_IMAGE_PROBLEMS', 'Image problems: ');
-define('TEXT_QUERY_LIMITED', 'Results limited to <b>%s</b> products.</b>');
+define('TEXT_QUERY_LIMITED', 'Results limited to <b>%s</b> entries.</b>');
 
-define('TEXT_NO_PRODUCTS_FOUND', 'No products were found in the database.');
-define('TEXT_NO_ERRORS_FOUND', 'There were no image errors found. All products with images defined refer to a valid image file, with the correct extension and of a common web image format.');
+define('TEXT_NO_ENTRIES_FOUND', 'No entries were found in the database.');
+define('TEXT_NO_ERRORS_FOUND', 'There were no image errors found. All entrie with images defined refer to a valid image file, with the correct extension and of a common web image format.');
 
 define('ERROR_NO_ERROR', 'ok');
 define('ERROR_NO_IMAGE_DEFINED', 'No image defined');
@@ -31,3 +35,5 @@ define('TABLE_HEADING_NAME', 'Name');
 define('TABLE_HEADING_IMAGE', 'Image');
 define('TABLE_HEADING_RESULT', 'Result');
 
+define('TEXT_EDIT_CATEGORY', 'Edit Category');
+define('TEXT_EDIT_PRODUCT', 'Edit Product');

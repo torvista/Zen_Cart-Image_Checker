@@ -6,14 +6,18 @@ define('HEADING_TITLE', 'Comprobar Imágenes');
 define('TEXT_VERSION', 'versión ');
 define('TEXT_IMAGES_DIRECTORY','Carpeta Imágenes: '. DIR_FS_CATALOG_IMAGES);
 
-define('TEXT_LIST_ALL_PRODUCTS', 'Mostrar todos los productos:');
-define('TEXT_LIST_DISABLED_PRODUCTS', 'Mostrar los productos deshabilitados:');
-define('TEXT_LIST_NO_IMAGES_PRODUCTS', 'Mostrar productos sin imágenes definidas:');
-define('TEXT_PRODUCTS_CHECKED', 'Productos comprobados: ');
+define('TEXT_LIST_TYPE', 'Comprobar:');
+define('TEXT_CHECK_CATEGORIES', 'Categorías');
+define('TEXT_CHECK_PRODUCTS', 'Productos');
+define('TEXT_FILTERS', 'Filtros:');
+define('TEXT_LIST_ALL', 'Mostrar todo:');
+define('TEXT_LIST_DISABLED', 'Mostrar las entradas deshabilitadas:');
+define('TEXT_LIST_NO_IMAGES', 'Mostrar entradas sin imágenes definidas:');
+define('TEXT_ENTRIES_CHECKED', 'Productos comprobados: ');
 define('TEXT_IMAGE_PROBLEMS', 'Problemas con imágenes: ');
 define('TEXT_QUERY_LIMITED', 'Resultados limitados a <b>%s</b> productos.</b>');
 
-define('TEXT_NO_PRODUCTS_FOUND', 'No se ha encontrado productos en este base de datos.');
+define('TEXT_NO_ENTRIES_FOUND', 'No se ha encontrado productos en este base de datos.');
 define('TEXT_NO_ERRORS_FOUND', 'There were no image errors found. All products with images defined refer to a valid image file, with the correct extension and of a common web image format.');
 
 define('ERROR_NO_ERROR', 'ok');
@@ -30,3 +34,6 @@ define('TABLE_HEADING_STATUS', 'Estado');
 define('TABLE_HEADING_NAME', 'Nombre');
 define('TABLE_HEADING_IMAGE', 'Imagen');
 define('TABLE_HEADING_RESULT', 'Resultado');
+
+define('TEXT_EDIT_CATEGORY', 'Editar Categoría');
+define('TEXT_EDIT_PRODUCT', 'Editar Producto');
