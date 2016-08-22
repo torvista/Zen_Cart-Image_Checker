@@ -17,8 +17,7 @@ define('TEXT_ENTRIES_CHECKED', 'Entries checked: ');
 define('TEXT_IMAGE_PROBLEMS', 'Image problems: ');
 define('TEXT_QUERY_LIMITED', 'Results limited to <b>%s</b> entries.</b>');
 
-define('TEXT_NO_ENTRIES_FOUND', 'No entries were found in the database.');
-define('TEXT_NO_ERRORS_FOUND', 'There were no image errors found. All entrie with images defined refer to a valid image file, with the correct extension and of a common web image format.');
+define('TEXT_NO_ERRORS_FOUND', '<p>There were no image errors found.<br />All entries with images defined refer to a valid image file, with the correct extension and of a common web image format.</p>');
 
 define('ERROR_NO_ERROR', 'ok');
 define('ERROR_NO_IMAGE_DEFINED', 'No image defined');

@@ -397,7 +397,6 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
 
     </div>
 
-    <?php if (sizeof($results_info) > 0) { ?>
 
     <div>
         <?php echo zen_draw_form('options', FILENAME_IMAGE_CHECKER, zen_get_all_get_params(array('listType', 'listAll', 'listDisabled', 'listNoImages')), 'get', 'id="options"'); ?>
@@ -425,7 +424,9 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
         </fieldset>
         </form>
     </div>
-    <?php
+
+    <?php if (sizeof($results_info) > 0) {
+
     if ($list_all) { ?>
         <div style="float: right">
             <?php echo $products_split->display_count($sql_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'], ($list_categories ? TEXT_DISPLAY_NUMBER_OF_CATEGORIES : TEXT_DISPLAY_NUMBER_OF_PRODUCTS));
@@ -529,7 +530,7 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
     <div>
 
         <?php } else { ?>
-            <p><?php echo TEXT_NO_ENTRIES_FOUND; ?></p>
+            <?php echo TEXT_NO_ERRORS_FOUND; ?>
         <?php } ?>
     </div>
 </div>

@@ -17,8 +17,7 @@ define('TEXT_ENTRIES_CHECKED', 'Productos comprobados: ');
 define('TEXT_IMAGE_PROBLEMS', 'Problemas con imágenes: ');
 define('TEXT_QUERY_LIMITED', 'Resultados limitados a <b>%s</b> productos.</b>');
 
-define('TEXT_NO_ENTRIES_FOUND', 'No se ha encontrado productos en este base de datos.');
-define('TEXT_NO_ERRORS_FOUND', 'There were no image errors found. All products with images defined refer to a valid image file, with the correct extension and of a common web image format.');
+define('TEXT_NO_ERRORS_FOUND', '<p>No se ha encontrado entradas con problemas con las imágenes.<br />Los productos/categories con enlaces a imágenes vinculan con imágenes que existen, son de un formato web válido/común y que cuadran con su extensión.</p>');
 
 define('ERROR_NO_ERROR', 'ok');
 define('ERROR_NO_IMAGE_DEFINED', 'Imagen no definido');
