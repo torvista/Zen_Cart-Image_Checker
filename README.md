@@ -1,5 +1,14 @@
 Image Checker: Zen Cart Admin tool
 
+Tested with Zen Cart 1.55.
+
+Support thread for Missing Images
+=================================
+http://www.zen-cart.com/showthread.php?213966
+
+Github for Image Checker
+=================================
+https://github.com/torvista/zen-cart_Image-Checker
 
 Function
 ========
@@ -7,7 +16,6 @@ Checks
 - that the images linked to the products in the database exist
 - that the format of the linked image corresponds with its filename extension
 - that the format is a jpg/gif/bmp/png and not some other less common web format
-
 
 Admin core files modified?
 =========================
@@ -29,24 +37,28 @@ You should have received a copy of the GNU General Public License along with thi
 
 Installation
 ============
-1) Copy the content of the YOUR_ADMIN to your Admin folder. There should be no overwrites.
-I recommend you ALWAYS compare any "Plugin" fileset (Beyond Compare/Winmerge etc.) first to ensure there are indeed no overwrites.
-DO NOT TRUST ANY PLUGIN to be perfectly written for ALL sites.
+0) Try this (as with ANY plugins/modifications) on your DEVELOPMENT SERVER first. Trust no-one!
 
-2) On first refresh of any admin page, some installation messages should be shown and the file responsible for registering the page in the database will self-delete.
-Attend to any error messages.
+1) Backup your database and fileset.
+2) Copy the CONTENTS of the "YOUR_ADMIN" to YOUR Admin folder. There should be no overwrites.
+I recommend you ALWAYS compare any "Plugin" fileset (Beyond Compare/Winmerge etc.) to your fileset FIRST to ensure there are indeed NO overwrites.
+DO NOT TRUST ANY PLUGIN to be perfectly written for ALL sites.
+3) On the first refresh of any admin page, some installation messages should be shown. Attend to any error messages.
+4) The file 
+/includes/functions/extra_functions/register_image_checker.php
+has an auto-delete function so it does not run on every admin page load, but this is confusing when checking locally then uploading to the production site...but it has already vanished/self-deleted. So, this function is not enabled.
+This file can be manually deleted when the admin menu items have been installed.
 
 Use
 ===
 Open the Tools->Image Checker page
-It will run the tool immediately but showing only the errors it finds for ENABLED products. The error count is the total of all the products.
+It will run the tool immediately (and so will take a few seconds),  and will show only the errors it finds for ENABLED products. The error count is the total of all the products.
 To include disabled products in the list, select the checkbox and the page will refresh.
 To show all products, select the checkbox and the page will refresh using the pagination defined by the Admin->Maximum values page.  The error count is for that page only.
 
 Known Issues
 ============
-People on shared servers or those without the ability to turn Safe Mode off will experience more time outs on larger databases. This is because I cannot force the script to essentially reset the execution_timer. This will be worked on in a later version. You can try to edit the script on line 118 and change the SQL query a little bit. If you do, you may end up having to run this script a couple of times.
-
+People on shared servers or those without the ability to turn Safe Mode off will experience more time-outs on larger databases. This is because the script cannot reset the execution_timer.
 
 Uninstall
 =========
@@ -55,10 +67,11 @@ Copy and run this single line of sql in the Admin->Install SQL Patches tool
 
 DELETE FROM admin_pages WHERE page_key = 'toolsImageChecker';
 
-
 History - Changelog
 ===================
 https://github.com/torvista/Image-Checker.git
+
+2018 12 torvista: uploaded to Plugins as v2.0.
 
 2016 08 torvista
 Originally forked from Missing Images but I decided to revise it completely and also (in future) integrate other image checking plugins.
@@ -81,7 +94,6 @@ Previous history as Missing Images
 Github Zen4All
 https://github.com/Zen4All/missing-images-zen
 
-
 v1.0.2	2014-07-24 13:50
   * Removed the choice of running the script as MySQLi or MySQL. The script 
     will now check if it can run mysqli_connect. If not, it will run 
@@ -91,7 +103,7 @@ v1.0.2	2014-07-24 13:50
     MySQL is removed from PHP.
   * Consolidated the location of the query that is being run by the script to
     one location. (There is no difference in SQL language between MySQL and 
-    MySQLi. So having two seperate queries which produced the same result table
+    MySQLi. So having two separate queries which produced the same result table
     was a bit redundant.)
 
 v1.0.1	2014-07-24 12:58
@@ -104,10 +116,6 @@ v1.0	2014-07-16 02:37
 Author
 Paul Williams (retched@iwle.com)
 
-
-Support thread for Missing Images
-=================================
-http://www.zen-cart.com/showthread.php?213966
 
 
 
