@@ -1,6 +1,6 @@
 Image Checker: Zen Cart Admin tool
 
-Tested with Zen Cart 1.55.
+Tested to Zen Cart 1.56a
 
 Support thread for Missing Images
 =================================
