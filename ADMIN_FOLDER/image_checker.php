@@ -1,7 +1,7 @@
 <?php
 // Plugin: Image Checker
 
-define('IMAGE_CHECKER_VERSION', '2.0');
+define('IMAGE_CHECKER_VERSION', '2.1');
 //for debugging,  using a small/fast result set
 $limit_search = 0;//digit or 0, for debugging code with a small result set. Ignored when list all selected
 
@@ -28,7 +28,7 @@ $limit_search = 0;//digit or 0, for debugging code with a small result set. Igno
 require('includes/application_top.php');
 
 //getimagesize possible returned values
-$getimagesize_types = array(
+$getimagesize_types = [
     0 => 'UNKNOWN',
     1 => 'GIF',
     2 => 'JPEG',
@@ -48,7 +48,7 @@ $getimagesize_types = array(
     16 => 'XBM',
     17 => 'ICO',
     18 => 'COUNT'
-);
+];
 /*php constants
 IMAGETYPE_GIF=1
 IMAGETYPE_JPEG=2
@@ -58,10 +58,10 @@ IMAGETYPE_BMP=6
 ///////////////////////////////////////////////////////////////////////////
 
 //get value of checkbox to show all products or only those with image issues
-//echo '$_GET[\'listAllProducts\']=' . $_GET['listAllProducts'] . '<br />';
-//echo '$_POST[\'listAllProducts\']=' . $_POST['listAllProducts'] . '<br />';
+//echo '$_GET[\'listAllProducts\']=' . $_GET['listAllProducts'] . '<br>';
+//echo '$_POST[\'listAllProducts\']=' . $_POST['listAllProducts'] . '<br>';
 
-$list_categories = (isset ($_GET['listType']) && $_GET['listType'] == 'categories' ? true : false);
+$list_categories = ((isset ($_GET['listType']) && $_GET['listType'] === 'categories'));
 //$list_categories = false;//override
 $list_products = !$list_categories;
 
@@ -74,7 +74,9 @@ $list_disabled = (isset ($_GET['listDisabled']) ? true : false);
 //get value of checkbox to show disabled products too (if not a full listing)
 $list_no_images = (isset ($_GET['listNoImages']) ? true : false);
 
-//echo __LINE__ . ': $list_categories=' . $list_categories . ', $list_products=' . $list_products . ', $list_all=' . $list_all . ', $list_disabled=' . $list_disabled . ', $list_no_images=' . $list_no_images . '<br />';
+//echo __LINE__ . ': $list_categories=' . $list_categories . ', $list_products=' . $list_products . ', $list_all=' . $list_all . ', $list_disabled=' . $list_disabled . ', $list_no_images=' . $list_no_images . '<br>';
+$list_disabled_clause = ' ';
+$list_no_images_clause = ' ';
 
 if ($list_products && !$list_all) {//if only errors selected, allow filtering by product status
     $list_disabled_clause = ($list_disabled ? ' ' : ' AND p.products_status = 1 ');//if checkbox ticked, no filter
@@ -103,62 +105,43 @@ if ($list_all) {//if only errors selected, allow filtering by product status
     if (isset($_GET['page']) && ($_GET['page'] > 1)) {
         $rows = $_GET['page'] * MAX_DISPLAY_SEARCH_RESULTS - MAX_DISPLAY_SEARCH_RESULTS;
     }
-
-    //echo __LINE__ . ': $sql_query_raw=' . $sql_query_raw . '<br />';
-    $products_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $sql_query_raw,
-        $sql_query_numrows);
+    $products_split = new splitPageResults($_GET['page'], MAX_DISPLAY_SEARCH_RESULTS, $sql_query_raw, $sql_query_numrows);
     $results_counter = (($_GET['page'] - 1) * MAX_DISPLAY_SEARCH_RESULTS);
 } else {
     $results_counter = 1;
 }
-//echo __LINE__ . ': $sql_query_raw=' . $sql_query_raw . '<br />';
-
+//echo __LINE__ . ': $sql_query_raw=' . $sql_query_raw . '<br>';
 $result = $db->Execute($sql_query_raw);
-
-$results_info = array();
-
-//php 5.5.32 gives mysqli error
-/*foreach ($result as $row) {
-    $results_counter++;
-    $results_info[] = array(
-        "entry" => $results_counter,
-        "id" => $row['products_id'],
-        "model" => $row['products_model'],
-        "image" => $row['products_image'],
-        "status" => $row['products_status'],
-        "name" => $row['products_name']
-    );
-}*/
-$results_info = array();
+$results_info = [];
 if ($list_categories) {
     while (!$result->EOF) {
         $results_counter++;
-        $results_info[] = array(
+        $results_info[] = [
             "entry" => $results_counter,
             "id" => $result->fields['categories_id'],
             //"model" => $result->fields['products_model'],
             "image" => $result->fields['categories_image'],
             "status" => $result->fields['categories_status'],
             "name" => $result->fields['categories_name']
-        );
+        ];
         $result->MoveNext();
     }
 } else {
     while (!$result->EOF) {
         $results_counter++;
-        $results_info[] = array(
+        $results_info[] = [
             "entry" => $results_counter,
             "id" => $result->fields['products_id'],
             "model" => $result->fields['products_model'],
             "image" => $result->fields['products_image'],
             "status" => $result->fields['products_status'],
             "name" => $result->fields['products_name']
-        );
+        ];
         $result->MoveNext();
     }
 }
 
-//echo __LINE__ . ': Before Processing<pre>$results_info<br />';echo print_r($results_info);echo '</pre>';
+//echo __LINE__ . ': Before Processing<pre>$results_info<br>';echo print_r($results_info);echo '</pre>';
 /*
 * iterate over each product:
  *      1. Determine if the file exists. (file_exists($file_path))
@@ -171,7 +154,7 @@ if ($list_categories) {
 
 $error_count = 0;
 foreach ($results_info as $key => $value) {//add $results_info['image_status'] and $results_info['error'] into array
-    //echo __LINE__ . ': In Processing<pre>$value<br />';print_r($value);echo '</pre>';
+    //echo __LINE__ . ': In Processing<pre>$value<br>';print_r($value);echo '</pre>';
 
 //$results_info['image_status']
 //0 - file exists and is good
@@ -182,20 +165,15 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
 
     $file = DIR_FS_CATALOG_IMAGES . $results_info[$key]['image'];
 
-    if ($results_info[$key]['image'] == '') {
+    if ($results_info[$key]['image'] === null || trim($results_info[$key]['image']) === '') {
         $results_info[$key]['image_status'] = 1;
         $results_info[$key]['error'] = ERROR_NO_IMAGE_DEFINED;
         $error_count++;
-    } elseif (!file_exists($file)) {
-        $results_info[$key]['image_status'] = 4;
-        $results_info[$key]['error'] = ERROR_IMAGE_NOT_FOUND;
-        $error_count++;
-    } else {
-
+    } elseif (file_exists($file)) {
         $image_check = getimagesize($file); // getimagesize returns 0 => height, 1 => width, and 2 => type.
         $image_type = $image_check[2];//third element of array
 
-        //echo $results_info[$key]['image'] . ', $image_type=' . $image_type . '<br />';
+        //echo $results_info[$key]['image'] . ', $image_type=' . $image_type . '<br>';
 
         $file_ext = strtolower(substr(strrchr($file, '.'),
             1));  // Retrieve the file extension, convert it to lower case.
@@ -206,57 +184,57 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
             $results_info[$key]['image_status'] = 3;
             $error_count++;
 
-        } elseif (!in_array($image_type, array(
+        } elseif (!in_array($image_type, [
             IMAGETYPE_GIF,
             IMAGETYPE_JPEG,
             IMAGETYPE_PNG,
             IMAGETYPE_BMP
-        ))) {//The image found is not one of the common web types
+        ], true)) {//The image found is not one of the common web types
             $results_info[$key]['error'] = sprintf(ERROR_NOT_COMMON_FORMAT, $file_ext);
             $results_info[$key]['image_status'] = 2;
             $error_count++;
 
-        } elseif ($file_ext == "gif" && $image_type != IMAGETYPE_GIF) {//image extension = GIF, but it isn't
+        } elseif ($file_ext === "gif" && $image_type !== IMAGETYPE_GIF) {//image extension = GIF, but it isn't
             $results_info[$key]['error'] = sprintf(ERROR_IMAGE_FORMAT, $file_ext, $getimagesize_types[$image_type]);
             $results_info[$key]['image_status'] = 3;
             $error_count++;
 
-        } elseif ((in_array($file_ext, array(
+        } elseif ($image_type !== IMAGETYPE_JPEG && (in_array($file_ext, [
                 "jpg",
                 "jpeg",
                 "jpe",
                 "jfif",
                 "jif"
-            )) && $image_type != IMAGETYPE_JPEG)) {//image extension = JPEG-type, but it isn't
+            ]))) {//image extension = JPEG-type, but it isn't
             $results_info[$key]['error'] = sprintf(ERROR_IMAGE_FORMAT, $file_ext, $getimagesize_types[$image_type]);
             $results_info[$key]['image_status'] = 3;
             $error_count++;
 
-        } elseif ($file_ext == "png" && $image_type != IMAGETYPE_PNG) {//image extension = PNG, but it isn't
+        } elseif ($file_ext === "png" && $image_type !== IMAGETYPE_PNG) {//image extension = PNG, but it isn't
             $results_info[$key]['error'] = sprintf(ERROR_IMAGE_FORMAT, $file_ext, $getimagesize_types[$image_type]);
             $results_info[$key]['image_status'] = 3;
             $error_count++;
 
-        } elseif ($file_ext == "bmp" && $image_type != IMAGETYPE_BMP) {//image extension = BMP, but it isn't
+        } elseif ($file_ext === "bmp" && $image_type !== IMAGETYPE_BMP) {//image extension = BMP, but it isn't
             $results_info[$key]['error'] = sprintf(ERROR_IMAGE_FORMAT, $file_ext, $getimagesize_types[$image_type]);
             $results_info[$key]['image_status'] = 3;
             $error_count++;
 
-        } else {//its valid
-            if (!$list_all) {
-                unset ($results_info[$key]);
-            } else {
-                $results_info[$key]['error'] = ERROR_NO_ERROR;
-                $results_info[$key]['image_status'] = 0;
-            }
+        } elseif ($list_all) {
+            $results_info[$key]['error'] = ERROR_NO_ERROR;
+            $results_info[$key]['image_status'] = 0;
+        } else {
+            unset ($results_info[$key]);
         }
+    } else {
+        $results_info[$key]['image_status'] = 4;
+        $results_info[$key]['error'] = ERROR_IMAGE_NOT_FOUND;
+        $error_count++;
     }
-
-    if (!ini_get('safe_mode')) {
-        set_time_limit(30);
-    } // If you're not running PHP in Safe Mode, reset the timer to 30 seconds and start again. This is to allow for larger databases to be run. Will work on a better fix to this in a later update. Will likely involve a bit of refreshing and sending to the $_POST.
+    set_time_limit(30);
+// If you're not running PHP in Safe Mode, reset the timer to 30 seconds and start again. This is to allow for larger databases to be run. Will work on a better fix to this in a later update. Will likely involve a bit of refreshing and sending to the $_POST.
 }
-//echo __LINE__ . ': After Processing<pre>$results_info<br />';print_r($results_info);echo '</pre>';
+//echo __LINE__ . ': After Processing<pre>$results_info<br>';print_r($results_info);echo '</pre>';
 
 ?>
 <!DOCTYPE html>
@@ -266,9 +244,9 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
     <title><?php echo 'Admin - ' . HEADING_TITLE; ?></title>
     <link rel="stylesheet" type="text/css" href="includes/stylesheet.css">
     <link rel="stylesheet" type="text/css" href="includes/cssjsmenuhover.css" media="all" id="hoverJS">
-    <script type="text/javascript" src="includes/menu.js"></script>
-    <script type="text/javascript" src="includes/general.js"></script>
-    <script type="text/javascript">
+    <script src="includes/menu.js"></script>
+    <script src="includes/general.js"></script>
+    <script>
         <!--
         function init() {
             cssjsmenu('navbar');
@@ -406,59 +384,47 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
 <!-- header_eof //-->
 <!-- body //-->
 <div id="body">
-
     <div><h1><?php echo HEADING_TITLE . ' - ' . TEXT_VERSION . IMAGE_CHECKER_VERSION; ?></h1>
         <p><?php echo TEXT_IMAGES_DIRECTORY; ?></p>
-
         <?php if ($limit_search > 0) { ?>
-            <br/><p class="messageStackError"><?php echo '$limit_search=' . $limit_search; ?></p>
+            <br><p class="messageStackError"><?php echo '$limit_search=' . $limit_search; ?></p>
         <?php } ?>
-
     </div>
-
-
     <div>
-        <?php echo zen_draw_form('options', FILENAME_IMAGE_CHECKER,
-            zen_get_all_get_params(array('listType', 'listAll', 'listDisabled', 'listNoImages')), 'get',
-            'id="options"'); ?>
-
+        <h2><?php echo TEXT_INTRO; ?></h2>
+        <?php echo zen_draw_form('options', FILENAME_IMAGE_CHECKER, zen_get_all_get_params(['listType', 'listAll', 'listDisabled', 'listNoImages']), 'get', 'id="options"'); ?>
         <fieldset>
             <legend><?php echo TEXT_LIST_TYPE; ?></legend>
-            <label for="listTypeCategories"><?php echo TEXT_CHECK_CATEGORIES; ?></label>
-            <?php echo zen_draw_radio_field('listType', 'categories', $list_categories, '',
-                'id="listTypeCategories" onchange="this.form.submit();"'); ?>
-            <label for="listTypeProducts"><?php echo TEXT_CHECK_PRODUCTS; ?></label>
-            <?php echo zen_draw_radio_field('listType', 'products', $list_products, '',
-                'id="listTypeProducts" onchange="this.form.submit();"'); ?>
+            <label for="listTypeCategories"><?php echo TEXT_CATEGORIES; ?></label>
+            <?php echo zen_draw_radio_field('listType', 'categories', $list_categories, '', 'id="listTypeCategories" onchange="this.form.submit();"'); ?>
+            <label for="listTypeProducts"><?php echo TEXT_PRODUCTS; ?></label>
+            <?php echo zen_draw_radio_field('listType', 'products', $list_products, '', 'id="listTypeProducts" onchange="this.form.submit();"'); ?>
         </fieldset>
         <fieldset>
             <legend><?php echo TEXT_FILTERS; ?></legend>
             <label for="listAll"><?php echo TEXT_LIST_ALL; ?></label>
-            <?php echo zen_draw_checkbox_field('listAll', '1', $list_all, '',
-                'id="listAll" onchange="this.form.submit();"'); ?>
+            <?php echo zen_draw_checkbox_field('listAll', '1', $list_all, '', 'id="listAll" onchange="this.form.submit();"'); ?>
             <?php if (!$list_all) {//do not show filter if listing all products anyway ?>
                 <label for="listDisabled"><?php echo TEXT_LIST_DISABLED; ?></label>
-                <?php echo zen_draw_checkbox_field('listDisabled', '1', $list_disabled, '',
-                    'id="listDisabled" onchange="this.form.submit();"'); ?>
+                <?php echo zen_draw_checkbox_field('listDisabled', '1', $list_disabled, '', 'id="listDisabled" onchange="this.form.submit();"'); ?>
                 <label for="listNoImages"><?php echo TEXT_LIST_NO_IMAGES; ?></label>
-                <?php echo zen_draw_checkbox_field('listNoImages', '1', $list_no_images, '',
-                    'id="listNoImages" onchange="this.form.submit();"');
+                <?php echo zen_draw_checkbox_field('listNoImages', '1', $list_no_images, '', 'id="listNoImages" onchange="this.form.submit();"');
             } ?>
             <!--
         <label for="limitResults">Limit search</label>
         <?php //echo zen_draw_input_field('limitSearch', $limit_search, ($limit_search ? 'class="messageStackCaution"' : ''), 'id="limitSearch" onblur="this.form.submit();"'); ?>-->
         </fieldset>
-        </form>
+        <?php echo '</form>'; ?>
     </div>
 
-    <?php if (sizeof($results_info) > 0) {
+    <?php if (count($results_info) > 0) {
 
     if ($list_all) { ?>
         <div style="float: right">
             <?php echo $products_split->display_count($sql_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'],
                 ($list_categories ? TEXT_DISPLAY_NUMBER_OF_CATEGORIES : TEXT_DISPLAY_NUMBER_OF_PRODUCTS));
             echo $products_split->display_links($sql_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS,
-                $_GET['page'], zen_get_all_get_params(array('page'))); ?>
+                $_GET['page'], zen_get_all_get_params(['page'])); ?>
         </div>
     <?php }
     if ($error_count > 0) {
@@ -511,28 +477,23 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
                     <!--<td class="center"><?php //echo $value['entry']; ?></td>-->
                     <td class="center"><?php echo $value['id']; ?></td>
                     <td class="center" style="padding-right: 0"><?php
-                        echo($value['status'] == '1' ?
+                        echo($value['status'] === '1' ?
                             zen_image(DIR_WS_IMAGES . 'icon_green_on.gif', IMAGE_ICON_STATUS_ON) :
                             zen_image(DIR_WS_IMAGES . 'icon_red_on.gif', IMAGE_ICON_STATUS_OFF))
                         ?>
                     </td>
                     <td class="center" style="padding-left: 0">
                         <?php if ($list_categories) {
-                            //echo 'zen_get_path($value[\'id\']) ='.zen_get_path($value['id']).'<br />';
+                            //echo 'zen_get_path($value[\'id\']) ='.zen_get_path($value['id']).'<br>';
                             //echo 'zen_generate_category_path($value[\'id\']) ='; echo '<pre>'; print_r(zen_generate_category_path($value['id'])); echo '</pre>';
-                            //echo 'zen_output_generated_category_path($value[\'id\']) ='.zen_output_generated_category_path($value['id']).'<br />';
+                            //echo 'zen_output_generated_category_path($value[\'id\']) ='.zen_output_generated_category_path($value['id']).'<br>';
 
                             $categories_path_array = zen_generate_category_path($value['id']);
-                            $parent_cPath = $categories_path_array[0][1]['id'];
-                            //echo '$parent_cPath='.$parent_cPath.'<br />';
+                            $parent_cPath = $categories_path_array[0][0]['id'];
 
-                            echo '<a href="' . zen_href_link(FILENAME_CATEGORIES,
-                                    'cPath=' . $parent_cPath . '&amp;cID=' . (int)$value['id']) . '&amp;action=edit_category" title="' . TEXT_EDIT_CATEGORY . '" target="_blank">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif',
-                                    ICON_EDIT) . '</a>';
-                        } else {
-                            echo '<a href="' . zen_href_link(FILENAME_CATEGORIES,
-                                    'cPath=' . zen_get_product_path((int)$value['id']) . '&amp;product_type=1&amp;pID=' . (int)$value['id']) . '&amp;action=new_product" title="' . TEXT_EDIT_PRODUCT . '" target="_blank">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif',
-                                    ICON_EDIT) . '</a>';
+                            echo '<a href="' . zen_href_link(FILENAME_CATEGORIES, 'cPath=' . $parent_cPath . '&amp;cID=' . (int)$value['id']) . '&amp;action=edit_category" title="' . TEXT_EDIT_CATEGORY . '" target="_blank">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif', ICON_EDIT) . '</a>';
+                        } else { // is product
+                            echo '<a href="' . zen_href_link(FILENAME_CATEGORIES, 'cPath=' . zen_get_product_path((int)$value['id']) . '&amp;product_type=1&amp;pID=' . (int)$value['id']) . '&amp;action=new_product" title="' . TEXT_EDIT_PRODUCT . '" target="_blank">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif', ICON_EDIT) . '</a>';
                         } ?>
                     </td>
                     <?php if ($list_products) { ?>
@@ -540,7 +501,7 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
                     <?php } ?>
                     <td><?php
                         if ($list_categories) {
-                            echo zen_output_generated_category_path($value['id']) . '<br />';
+                            echo zen_output_generated_category_path($value['id']) . '<br>';
                         } else {
                             echo $value['name'];
                         } ?>
@@ -558,13 +519,12 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
             <?php echo $products_split->display_count($sql_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'],
                 TEXT_DISPLAY_NUMBER_OF_PRODUCTS);
             echo $products_split->display_links($sql_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, MAX_DISPLAY_PAGE_LINKS,
-                $_GET['page'], zen_get_all_get_params(array('page'))); ?>
+                $_GET['page'], zen_get_all_get_params(['page'])); ?>
         </div>
     <?php } ?>
     <div>
-
         <?php } else { ?>
-            <?php echo TEXT_NO_ERRORS_FOUND; ?>
+            <h2><?php echo TEXT_NO_ERRORS_FOUND; ?></h2>
         <?php } ?>
     </div>
 </div>
@@ -572,17 +532,17 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
 <!-- footer //-->
 <?php require(DIR_WS_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
-<script type="text/javascript" src="includes/javascript/jquery.tablesorter.js"></script>
-<script type="text/javascript">$(document).ready(function () {
+<script src="includes/javascript/jquery.tablesorter.js"></script>
+<script>$(document).ready(function () {
         $("table").tablesorter();
-        //$("table").tablesorter({widgets: ["zebra"], widgetOptions: {zebra: ["normal-row", "alt-row"]}});//for stripming, not working with default mouseover highlighting
+        //$("table").tablesorter({widgets: ["zebra"], widgetOptions: {zebra: ["normal-row", "alt-row"]}});//for striping, but not working with default mouseover highlighting
     });</script>
 <script>
     function alternate(id) {
         if (document.getElementsByTagName) {
-            var table = document.getElementById(id);
-            var rows = table.getElementsByTagName("tr");
-            for (var i = 1; i < rows.length; i++) {
+            let table = document.getElementById(id);
+            let rows = table.getElementsByTagName("tr");
+            for (let i = 1; i < rows.length; i++) {
                 //manipulate rows
                 if (i % 2 === 0) {
                     rows[i].className = "rowEven";

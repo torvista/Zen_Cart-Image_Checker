@@ -1,6 +1,6 @@
 Image Checker: Zen Cart Admin tool
 
-Tested to Zen Cart 1.56a
+Tested with Zen Cart 1.57.
 
 Support thread for Missing Images
 =================================
@@ -70,6 +70,9 @@ DELETE FROM admin_pages WHERE page_key = 'toolsImageChecker';
 History - Changelog
 ===================
 https://github.com/torvista/Image-Checker.git
+
+2020 04 torvista: v2.1.
+No functional changes. Fixes for php notices, strict comparisions and minor changes per IDE recommendations.
 
 2018 12 torvista: uploaded to Plugins as v2.0.
 
