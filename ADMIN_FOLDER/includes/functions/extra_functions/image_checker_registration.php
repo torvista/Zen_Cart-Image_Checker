@@ -34,7 +34,7 @@ if (function_exists('zen_register_admin_page')) {
         //check the existence of the files necessary for this mod
         $error_messages = [];
         foreach ($this_mod_file_list as $file) {
-            if (@!file_exists($file)) {
+            if (!file_exists($file)) {
                 $error_messages[] = $this_mod_name . " file: $file NOT found";
                 $can_autodelete = false;
             } else { //debug
@@ -42,7 +42,7 @@ if (function_exists('zen_register_admin_page')) {
             }
         }
 
-        if (sizeof($error_messages) > 0) {
+        if (count($error_messages) > 0) {
             // Let the user know that there are problem(s) with the installation
             foreach ($error_messages as $error_message) {
                 print '<p style="' . $style_error . '">Error: ' . $error_message . "</p>\n";
@@ -66,6 +66,6 @@ if (function_exists('zen_register_admin_page')) {
 if ($can_autodelete) {
     // Either the new menu item has been registered, or it was already registered.
     //Stop the wasteful process of having this script run again by having it delete itself
-    $autodeleted = @unlink($this_file);
+    $autodeleted = unlink($this_file);
     print($autodeleted ? '<p style="' . $style_success . '">' . $this_file . " has been removed (now not required)</p>\n" : '<p style="' . $style_error . '">Unable to delete ' . $this_file . "</p>\n");
 }
