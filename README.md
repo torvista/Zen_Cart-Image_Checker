@@ -1,7 +1,6 @@
-<<<<<<< Updated upstream
 Image Checker: Zen Cart Admin tool
 
-Tested with Zen Cart 1.57.
+Compatible up to and including Zen Cart 1.58.
 
 Support thread for Missing Images
 =================================
@@ -38,14 +37,17 @@ You should have received a copy of the GNU General Public License along with thi
 
 Installation
 ============
-0) Try this (as with ANY plugins/modifications) on your DEVELOPMENT SERVER first. Trust no-one!
+0. Try this (as with ANY plugins/modifications) on your DEVELOPMENT SERVER first. Trust no-one!
 
-1) Backup your database and fileset.
-2) Copy the CONTENTS of the "YOUR_ADMIN" to YOUR Admin folder. There should be no overwrites.
-I recommend you ALWAYS compare any "Plugin" fileset (Beyond Compare/Winmerge etc.) to your fileset FIRST to ensure there are indeed NO overwrites.
+1. Backup your database and fileset.
+2. Copy the CONTENTS of the "YOUR_ADMIN" to YOUR Admin folder. There should be no overwrites.
+Although spanish language files are included, you may delete them.
+
+  I recommend you ALWAYS compare any "Plugin" fileset (Beyond Compare/Winmerge etc.) to your fileset FIRST to ensure there are indeed NO overwrites.
 DO NOT TRUST ANY PLUGIN to be perfectly written for ALL sites.
-3) On the first refresh of any admin page, some installation messages should be shown. Attend to any error messages.
-4) The file 
+
+3. On the first refresh of any admin page, some installation messages should be shown. Attend to any error messages.
+4. The file
 /includes/functions/extra_functions/register_image_checker.php
 has an auto-delete function so it does not run on every admin page load, but this is confusing when checking locally then uploading to the production site...but it has already vanished/self-deleted. So, this function is not enabled.
 This file can be manually deleted when the admin menu items have been installed.
@@ -71,6 +73,9 @@ DELETE FROM admin_pages WHERE page_key = 'toolsImageChecker';
 History - Changelog
 ===================
 https://github.com/torvista/Image-Checker.git
+
+2020 12 29 torvista
+No functional changes. Minor changes per IDE recommendations. Tested with Zen Cart 158.
 
 2020 04 torvista: v2.1.
 No functional changes. Fixes for php notices, strict comparisions and minor changes per IDE recommendations.
@@ -197,7 +202,7 @@ History - Changelog
 ===================
 https://github.com/torvista/Image-Checker.git
 
-2020 04 torvista: v2.1.
+2020 12 24 torvista: v2.1.
 No functional changes. Fixes for php notices, strict comparisions and minor changes per IDE recommendations.
 
 2018 12 torvista: uploaded to Plugins as v2.0.
@@ -244,8 +249,3 @@ v1.0	2014-07-16 02:37
 
 Author
 Paul Williams (retched@iwle.com)
-
-
-
-
->>>>>>> Stashed changes
