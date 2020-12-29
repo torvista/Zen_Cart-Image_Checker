@@ -14,10 +14,10 @@ $limit_search = 0;//digit or 0, for debugging code with a small result set. Igno
 // This file reads the image link path associated with each product and
 // a) checks if anything is defined
 // b) if defined, checks if the file referenced exists, if it is an image, if it is named correctly and if it is a common file type.
-// 
+//
 // The script reports any discrepancies
 // To get the most of this file, you should disable PHP's safe mode as this file
-// may take an excessively long time if you're running this script on a LARGE 
+// may take an excessively long time if you're running this script on a LARGE
 // database. Large being anywhere near 2000 or more products. In addition,
 // you should also probably run this on a dedicated server or a local testing
 // server as opposed to online.
@@ -61,18 +61,18 @@ IMAGETYPE_BMP=6
 //echo '$_GET[\'listAllProducts\']=' . $_GET['listAllProducts'] . '<br>';
 //echo '$_POST[\'listAllProducts\']=' . $_POST['listAllProducts'] . '<br>';
 
-$list_categories = ((isset ($_GET['listType']) && $_GET['listType'] === 'categories'));
+$list_categories = ((isset($_GET['listType']) && $_GET['listType'] === 'categories'));
 //$list_categories = false;//override
 $list_products = !$list_categories;
 
-$list_all = (isset ($_GET['listAll']) ? true : false);
+$list_all = isset($_GET['listAll']);
 //$list_all = true;//override
 
 //get value of checkbox to show disabled products too (if not a full listing)
-$list_disabled = (isset ($_GET['listDisabled']) ? true : false);
+$list_disabled = isset($_GET['listDisabled']);
 
 //get value of checkbox to show disabled products too (if not a full listing)
-$list_no_images = (isset ($_GET['listNoImages']) ? true : false);
+$list_no_images = isset($_GET['listNoImages']);
 
 //echo __LINE__ . ': $list_categories=' . $list_categories . ', $list_products=' . $list_products . ', $list_all=' . $list_all . ', $list_disabled=' . $list_disabled . ', $list_no_images=' . $list_no_images . '<br>';
 $list_disabled_clause = ' ';
@@ -147,7 +147,7 @@ if ($list_categories) {
  *      1. Determine if the file exists. (file_exists($file_path))
  *      2. Determine if the image retrieved is actually an image.
  *         (getimagesize($path))
- *      3. Determine if the image is stored in the correct format. (An image with 
+ *      3. Determine if the image is stored in the correct format. (An image with
  *         a .PNG should register as a PNG.)
  */
 //echo __LINE__ . ' <pre>$results_info';print_r($results_info);echo '</pre><hr />';
@@ -247,7 +247,6 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
     <script src="includes/menu.js"></script>
     <script src="includes/general.js"></script>
     <script>
-        <!--
         function init() {
             cssjsmenu('navbar');
             if (document.getElementById) {
@@ -256,8 +255,6 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
             }
             alternate('resultsTable');//stripe the table rows
         }
-
-        // -->
     </script>
 
     <style type="text/css">
