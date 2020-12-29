@@ -4,7 +4,7 @@
 
 define('HEADING_TITLE', 'Images Checker');
 define('TEXT_VERSION', 'version ');
-define('TEXT_IMAGES_DIRECTORY','Images path: '. DIR_FS_CATALOG_IMAGES);
+define('TEXT_IMAGES_DIRECTORY', 'Images path: ' . DIR_FS_CATALOG_IMAGES);
 define('TEXT_INTRO', 'Filters are enabled by default, to show ONLY <em>enabled</em> categories/products with image problems: the defined image is missing or the image is not the correct filetype.');
 define('TEXT_LIST_TYPE', 'Check:');
 define('TEXT_CATEGORIES', 'Categories');

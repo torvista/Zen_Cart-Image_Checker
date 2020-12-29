@@ -4,7 +4,7 @@
 
 define('HEADING_TITLE', 'Comprobar Imágenes');
 define('TEXT_VERSION', 'versión ');
-define('TEXT_IMAGES_DIRECTORY','Carpeta Imágenes: '. DIR_FS_CATALOG_IMAGES);
+define('TEXT_IMAGES_DIRECTORY', 'Carpeta Imágenes: ' . DIR_FS_CATALOG_IMAGES);
 
 define('TEXT_LIST_TYPE', 'Comprobar:');
 define('TEXT_CHECK_CATEGORIES', 'Categorías');
