@@ -5,7 +5,7 @@
 define('HEADING_TITLE', 'Image Checker');
 define('TEXT_VERSION', 'version ');
 define('TEXT_IMAGES_DIRECTORY', 'Images path: ' . DIR_FS_CATALOG_IMAGES);
-define('TEXT_INTRO', '<p>"Image <em>Problems</em>": the product has an image defined, but that image is missing or the defined image is not the correct filetype</p><p>Filters are enabled by default, to review only <em>enabled</em>categories/products.</p>');
+define('TEXT_INTRO', '<p>"Image <em>Problems</em>": the product has an image defined, but that image is missing or the defined image is not the correct filetype</p><p>Filters are enabled by default, to review only <em>enabled</em> categories/products.</p>');
 define('TEXT_LIST_TYPE', 'Check:');
 define('TEXT_CATEGORIES', 'Categories');
 define('TEXT_PRODUCTS', 'Products');
@@ -16,6 +16,7 @@ define('TEXT_LIST_NO_IMAGES', 'Show items with no images defined');
 define('TEXT_ENTRIES_CHECKED', 'Items checked: ');
 define('TEXT_IMAGE_PROBLEMS', 'Image problems: ');
 define('TEXT_QUERY_LIMITED', 'Results limited to <b>%s</b> items.</b>');
+define('TEXT_RESULTS_COUNT', '%1$s checked: %2$s.');
 
 define('TEXT_NO_ERRORS_FOUND', 'There were no image errors found.<br>All entries with images defined refer to an existing image file, with the correct extension (the filetype) and of a common web image format.');
 

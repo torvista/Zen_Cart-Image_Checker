@@ -380,7 +380,8 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
 <!-- header_eof //-->
 <!-- body //-->
 <div id="body">
-    <div><h1><?php echo HEADING_TITLE . ' - ' . TEXT_VERSION . IMAGE_CHECKER_VERSION; ?></h1>
+    <div><h1><?php echo HEADING_TITLE; ?></h1>
+        <p><?php echo TEXT_VERSION . IMAGE_CHECKER_VERSION; ?></p>
         <?php echo TEXT_IMAGES_DIRECTORY; ?>
         <?php if ($limit_search > 0) { ?>
             <br><p class="messageStackError"><?php echo '$limit_search=' . $limit_search; ?></p>
@@ -413,9 +414,9 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
         <?php echo '</form>'; ?>
     </div>
 
-    <?php if (count($results_info) > 0) {
-
-    if ($list_all) { ?>
+    <?php if ($result->RecordCount() > 0) { ?>
+    <p><?php echo sprintf(TEXT_RESULTS_COUNT, ($list_categories ? TEXT_CATEGORIES : TEXT_PRODUCTS), $result->RecordCount()); ?></p>
+    <?php if ($list_all) { ?>
         <div style="float: right">
             <?php echo $products_split->display_count($sql_query_numrows, MAX_DISPLAY_SEARCH_RESULTS, $_GET['page'],
                 ($list_categories ? TEXT_DISPLAY_NUMBER_OF_CATEGORIES : TEXT_DISPLAY_NUMBER_OF_PRODUCTS));
