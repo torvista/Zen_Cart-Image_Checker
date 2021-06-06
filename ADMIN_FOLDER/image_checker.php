@@ -3,7 +3,7 @@
 
 define('IMAGE_CHECKER_VERSION', '2.1');
 //for faster debugging: restrict the search to use a smaller result set
-$limit_search = 10;//integer or 0 for normal operation. Ignored when list all selected
+$limit_search = 0;//integer or 0 for normal operation. Ignored when list all selected
 
 /* originally based on
  * Missing Images Checker for ZenCart
