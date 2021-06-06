@@ -536,7 +536,7 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
     });</script>
 <script>
     function alternate(id) {
-        if (document.getElementsByTagName) {
+            if (document.getElementById(id)) {
             let table = document.getElementById(id);
             let rows = table.getElementsByTagName("tr");
             for (let i = 1; i < rows.length; i++) {
