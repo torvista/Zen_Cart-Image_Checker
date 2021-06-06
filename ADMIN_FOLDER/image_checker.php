@@ -257,7 +257,7 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
         }
     </script>
 
-    <style type="text/css">
+    <style>
         #body {
             padding: 0 1%;
         }
@@ -381,13 +381,13 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
 <!-- body //-->
 <div id="body">
     <div><h1><?php echo HEADING_TITLE . ' - ' . TEXT_VERSION . IMAGE_CHECKER_VERSION; ?></h1>
-        <p><?php echo TEXT_IMAGES_DIRECTORY; ?></p>
+        <?php echo TEXT_IMAGES_DIRECTORY; ?>
         <?php if ($limit_search > 0) { ?>
             <br><p class="messageStackError"><?php echo '$limit_search=' . $limit_search; ?></p>
         <?php } ?>
     </div>
     <div>
-        <h2><?php echo TEXT_INTRO; ?></h2>
+        <p><?php echo TEXT_INTRO; ?></p>
         <?php echo zen_draw_form('options', FILENAME_IMAGE_CHECKER, zen_get_all_get_params(['listType', 'listAll', 'listDisabled', 'listNoImages']), 'get', 'id="options"'); ?>
         <fieldset>
             <legend><?php echo TEXT_LIST_TYPE; ?></legend>
@@ -399,11 +399,11 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
         <fieldset>
             <legend><?php echo TEXT_FILTERS; ?></legend>
             <label for="listAll"><?php echo TEXT_LIST_ALL; ?></label>
-            <?php echo zen_draw_checkbox_field('listAll', '1', $list_all, '', 'id="listAll" onchange="this.form.submit();"'); ?>
+            <?php echo zen_draw_checkbox_field('listAll', '1', $list_all, '', 'id="listAll" onchange="this.form.submit();"'); ?>&nbsp;
             <?php if (!$list_all) {//do not show filter if listing all products anyway ?>
-                <label for="listDisabled"><?php echo TEXT_LIST_DISABLED; ?></label>
-                <?php echo zen_draw_checkbox_field('listDisabled', '1', $list_disabled, '', 'id="listDisabled" onchange="this.form.submit();"'); ?>
-                <label for="listNoImages"><?php echo TEXT_LIST_NO_IMAGES; ?></label>
+                 <label for="listDisabled"><?php echo TEXT_LIST_DISABLED; ?></label>
+                <?php echo zen_draw_checkbox_field('listDisabled', '1', $list_disabled, '', 'id="listDisabled" onchange="this.form.submit();"'); ?>&nbsp;
+                 <label for="listNoImages"><?php echo TEXT_LIST_NO_IMAGES; ?></label>
                 <?php echo zen_draw_checkbox_field('listNoImages', '1', $list_no_images, '', 'id="listNoImages" onchange="this.form.submit();"');
             } ?>
             <!--
@@ -520,7 +520,7 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
     <?php } ?>
     <div>
         <?php } else { ?>
-            <h2><?php echo TEXT_NO_ERRORS_FOUND; ?></h2>
+            <br><p class="messageStackSuccess"><?php echo TEXT_NO_ERRORS_FOUND; ?></p>
         <?php } ?>
     </div>
 </div>
