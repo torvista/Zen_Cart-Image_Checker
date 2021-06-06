@@ -2,8 +2,8 @@
 // Plugin: Image Checker
 
 define('IMAGE_CHECKER_VERSION', '2.1');
-//for debugging,  using a small/fast result set
-$limit_search = 0;//digit or 0, for debugging code with a small result set. Ignored when list all selected
+//for faster debugging: restrict the search to use a smaller result set
+$limit_search = 10;//integer or 0 for normal operation. Ignored when list all selected
 
 /* originally based on
  * Missing Images Checker for ZenCart
@@ -163,9 +163,9 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
 //3 - file exists but real file type does not match extension
 //4 - file missing
 
-    $file = DIR_FS_CATALOG_IMAGES . $results_info[$key]['image'];
+    $file = DIR_FS_CATALOG_IMAGES . $value['image'];
 
-    if ($results_info[$key]['image'] === null || trim($results_info[$key]['image']) === '') {
+    if ($value['image'] === null || trim($value['image']) === '') {
         $results_info[$key]['image_status'] = 1;
         $results_info[$key]['error'] = ERROR_NO_IMAGE_DEFINED;
         $error_count++;
