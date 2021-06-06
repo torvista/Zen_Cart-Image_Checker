@@ -2,17 +2,17 @@
 // Plugin: Image Checker
 // English
 
-define('HEADING_TITLE', 'Images Checker');
+define('HEADING_TITLE', 'Image Checker');
 define('TEXT_VERSION', 'version ');
 define('TEXT_IMAGES_DIRECTORY', 'Images path: ' . DIR_FS_CATALOG_IMAGES);
-define('TEXT_INTRO', 'Filters are enabled by default, to show ONLY <em>enabled</em> categories/products with image problems: the defined image is missing or the image is not the correct filetype.');
+define('TEXT_INTRO', '<p>"Image <em>Problems</em>": the product has an image defined, but that image is missing or the defined image is not the correct filetype</p><p>Filters are enabled by default, to review only <em>enabled</em>categories/products.</p>');
 define('TEXT_LIST_TYPE', 'Check:');
 define('TEXT_CATEGORIES', 'Categories');
 define('TEXT_PRODUCTS', 'Products');
-define('TEXT_FILTERS', 'Disable Filters:');
-define('TEXT_LIST_ALL', 'Show All:');
-define('TEXT_LIST_DISABLED', 'Show Disabled items (with image problems):');
-define('TEXT_LIST_NO_IMAGES', 'Show items with no images defined:');
+define('TEXT_FILTERS', 'Filters:');
+define('TEXT_LIST_ALL', 'Show All');
+define('TEXT_LIST_DISABLED', 'Show Disabled items (with image problems)');
+define('TEXT_LIST_NO_IMAGES', 'Show items with no images defined');
 define('TEXT_ENTRIES_CHECKED', 'Items checked: ');
 define('TEXT_IMAGE_PROBLEMS', 'Image problems: ');
 define('TEXT_QUERY_LIMITED', 'Results limited to <b>%s</b> items.</b>');
@@ -28,7 +28,6 @@ define('ERROR_NOT_COMMON_FORMAT', 'A <b>%s</b> file is not a type commonly used 
 
 define('TABLE_HEADING_ENTRY', 'Entry');
 define('TABLE_HEADING_ID', 'ID');
-//define('TABLE_HEADING_MODEL', 'Model');
 define('TABLE_HEADING_STATUS', 'Status');
 define('TABLE_HEADING_NAME', 'Name');
 define('TABLE_HEADING_IMAGE', 'Image');
@@ -36,3 +35,4 @@ define('TABLE_HEADING_RESULT', 'Result');
 
 define('TEXT_EDIT_CATEGORY', 'Edit Category');
 define('TEXT_EDIT_PRODUCT', 'Edit Product');
+
