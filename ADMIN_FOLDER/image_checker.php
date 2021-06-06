@@ -364,12 +364,11 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
             background-color: #8dbdd8;
             /* black desc arrow */
             background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
-
-        /* white desc arrow */
-        /* background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7); */
-        /* image */
-        /* background-image: url(black-desc.gif); */
-
+            /* white desc arrow */
+            /* background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7); */
+            /* image */
+            /* background-image: url(black-desc.gif); */
+        }
         table.tablesorter tbody tr.alt-row td {
             background-color: #E4E4E4;
         }
