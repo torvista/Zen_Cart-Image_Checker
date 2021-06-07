@@ -5,7 +5,7 @@
 define('HEADING_TITLE', 'Image Checker');
 define('TEXT_VERSION', 'version ');
 define('TEXT_IMAGES_DIRECTORY', 'Images path: ' . DIR_FS_CATALOG_IMAGES);
-define('TEXT_INTRO', '<p>"Image <em>Problems</em>": the product has an image defined, but that image is missing or the defined image is not the correct filetype</p><p>Filters are enabled by default, to review only <em>enabled</em> categories/products.</p>');
+define('TEXT_INTRO', '<p>"Image <em>Problems</em>": the product has an image defined, but that image is missing or the defined image is not the correct filetype.</p><p>Filters are enabled by default, to review only <em>enabled</em> categories/products.</p>');
 define('TEXT_LIST_TYPE', 'Check:');
 define('TEXT_CATEGORIES', 'Categories');
 define('TEXT_PRODUCTS', 'Products');
@@ -36,4 +36,5 @@ define('TABLE_HEADING_RESULT', 'Result');
 
 define('TEXT_EDIT_CATEGORY', 'Edit Category');
 define('TEXT_EDIT_PRODUCT', 'Edit Product');
-
+define('TEXT_NO_CATEGORIES_FOUND', 'No matching categories found.');
+define('TEXT_NO_PRODUCTS_FOUND', 'No matching products found.');

@@ -36,4 +36,5 @@ define('TABLE_HEADING_RESULT', 'Resultado');
 
 define('TEXT_EDIT_CATEGORY', 'Editar Categoría');
 define('TEXT_EDIT_PRODUCT', 'Editar Producto');
-
+define('TEXT_NO_CATEGORIES_FOUND', 'No se encontró categorías en acuerdo con el filtro.');
+define('TEXT_NO_PRODUCTS_FOUND', 'No se encontró products en acuerdo con el filtro.');
