@@ -2,6 +2,10 @@
 declare(strict_types=1);
 // Plugin: Image Checker
 
+/** directives for phpStorm code inspector
+ ** @var queryFactory $db
+ */
+
 define('IMAGE_CHECKER_VERSION', '2.1');
 //for faster debugging: restrict the search to use a smaller result set
 $limit_search = 0;//integer or 0 for normal operation. Ignored when list all selected
@@ -389,7 +393,7 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
         <?php } ?>
     </div>
     <div>
-        <p><?php echo TEXT_INTRO; ?></p>
+        <?php echo TEXT_INTRO; ?>
         <?php echo zen_draw_form('options', FILENAME_IMAGE_CHECKER, zen_get_all_get_params(['listType', 'listAll', 'listDisabled', 'listNoImages']), 'get', 'id="options"'); ?>
         <fieldset>
             <legend><?php echo TEXT_LIST_TYPE; ?></legend>
