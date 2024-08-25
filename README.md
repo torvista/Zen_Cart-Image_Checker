@@ -1,18 +1,13 @@
 # Image Checker: Zen Cart Admin tool
 
-Compatible up to and including Zen Cart 1.58/ php8.
-
-## Support thread for Missing Images
-http://www.zen-cart.com/showthread.php?213966
-
-## Github for Image Checker
-https://github.com/torvista/zen-cart_Image-Checker
-
 ## Function
 Checks 
 - that the images linked to the products in the database exist
 - that the format of the linked image corresponds with its filename extension
 - that the format is a jpg/gif/bmp/png and not some other less common web format
+
+## Compatibility
+Compatible up to and including Zen Cart 2, php8.
 
 ## Admin core files modified?
 No.
@@ -22,6 +17,12 @@ No.
 Yes: for the registration of the admin page.
 No: no product data is modified, the script is read-only.
 
+## Support thread for Missing Images/Image Checker
+http://www.zen-cart.com/showthread.php?213966
+
+## Github for Image Checker
+https://github.com/torvista/zen-cart_Image-Checker
+
 ## DISCLAIMER
 Installation of this contribution is done at your own risk.
 Whilst there are no changes made to your database or core files, it is still best practice to install ANY so-called "Plugin" on a DEVELOPMENT server before letting it loose on a production shop.
@@ -30,41 +31,35 @@ Whilst there are no changes made to your database or core files, it is still bes
 You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ## Installation
-
 1) Try this (as with ANY plugins/modifications) on your DEVELOPMENT SERVER first. Trust no-one!
 1) Backup your database and fileset.
-1) Copy the CONTENTS of the "YOUR_ADMIN" to YOUR Admin folder. There should be no overwrites.
-Although spanish language files are included, you may delete them.
-
-  I recommend you ALWAYS compare any "Plugin" fileset (Beyond Compare/Winmerge etc.) to your fileset FIRST to ensure there are indeed NO overwrites.
-DO NOT TRUST ANY PLUGIN to be perfectly written for ALL sites.
-
-3) On the first refresh of any admin page, some installation messages should be shown. Attend to any error messages.
-4) The file
-/includes/functions/extra_functions/register_image_checker.php
-has an auto-delete function so it does not run on every admin page load, but this is confusing when checking locally then uploading to the production site...but it has already vanished/self-deleted. So, this function is not enabled.
-This file can be manually deleted when the admin menu items have been installed.
+1) Copy the CONTENTS of the "zc_plugins" folder to your "zc_plugins" folder. There should be no overwrites.
+1) Admin->Modules->Plugin Modules->Image Checker->Install
 
 ## Use
-Open the Tools->Image Checker page
+Open the Tools->Image Checker page  
 It will run the tool immediately (and so will take a few seconds),  and will show only the errors it finds for ENABLED products. The error count is the total of all the products.
+
 To include disabled products in the list, select the checkbox and the page will refresh.
+
 To show all products, select the checkbox and the page will refresh using the pagination defined by the Admin->Maximum values page.  The error count is for that page only.
 
 ## Known Issues
 People on shared servers or those without the ability to turn Safe Mode off will experience more time-outs on larger databases. This is because the script cannot reset the execution_timer.
 
 ## Uninstall
-Remove all the files copied during the installation.
-Copy and run this single line of sql in the Admin->Install SQL Patches tool
 
-DELETE FROM admin_pages WHERE page_key = 'toolsImageChecker';
+1) Admin->Modules->Plugin Modules->Image Checker->Uninstall
+1) Remove files from zc_plugin.
 
 ## History - Changelog
-https://github.com/torvista/Image-Checker.git
+2024 08 25 v2.3.0 torvista:  
+converted to an encapsulated plugin  
+replaced <?php echo with <?=  
+no functional changes
 
-2023 10 31 torvista: v2.2.
-USe ZC158 admin header. No functional changes.
+2023 10 31 torvista: v2.2.  
+Use ZC158 admin header. No functional changes.
 
 2020 12 29 torvista
 No functional changes. Minor changes per IDE recommendations. Tested with Zen Cart 158.
