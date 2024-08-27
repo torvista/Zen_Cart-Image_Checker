@@ -6,16 +6,16 @@ declare(strict_types=1);
  * Plugin: Image Checker
  * @link https://github.com/torvista/Zen_Cart-Image_Checker
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @updated 31 10 2023
+ * @updated 25/08/2024 torvista
  */
 
 /** directives for phpStorm code inspector
  ** @var queryFactory $db
  */
 
-const IMAGE_CHECKER_VERSION = '2.2';
+const IMAGE_CHECKER_VERSION = '2.3.0';
 //for faster debugging: restrict the search to use a smaller result set
-$limit_search = 0;//integer or 0 for normal operation. Ignored when list all selected
+$limit_search = 0; // integer or 0 for normal operation. Ignored when list all selected
 
 /* originally based on
  * Missing Images Checker for ZenCart
@@ -25,7 +25,7 @@ $limit_search = 0;//integer or 0 for normal operation. Ignored when list all sel
 
 // This file reads the image link path associated with each product and
 // a) checks if anything is defined
-// b) if defined, checks if the file referenced exists, if it is an image, if it is named correctly and if it is a common file type.
+// b) if defined, checks if the file referenced exists, if it is an image, if it is named correctly, and if it is a common file type.
 //
 // The script reports any discrepancies
 // To get the most of this file, you should disable PHP's safe mode as this file
@@ -69,7 +69,7 @@ IMAGETYPE_BMP=6
 */
 ///////////////////////////////////////////////////////////////////////////
 
-//get value of checkbox to show all products or only those with image issues
+// get the value of checkbox to show all products or only those with image issues
 //echo '$_GET[\'listAllProducts\']=' . $_GET['listAllProducts'] . '<br>';
 //echo '$_POST[\'listAllProducts\']=' . $_POST['listAllProducts'] . '<br>';
 
@@ -80,10 +80,10 @@ $list_products = !$list_categories;
 $list_all = isset($_GET['listAll']);
 //$list_all = true;//override
 
-//get value of checkbox to show disabled products too (if not a full listing)
+// get the value of checkbox to show disabled products too (if not a full listing)
 $list_disabled = isset($_GET['listDisabled']);
 
-//get value of checkbox to show disabled products too (if not a full listing)
+// get the value of checkbox to show disabled products too (if not a full listing)
 $list_no_images = isset($_GET['listNoImages']);
 
 //echo __LINE__ . ': $list_categories=' . $list_categories . ', $list_products=' . $list_products . ', $list_all=' . $list_all . ', $list_disabled=' . $list_disabled . ', $list_no_images=' . $list_no_images . '<br>';
@@ -171,7 +171,7 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
 //0 - file exists and is good
 //1 - no file defined
 //2 - file exists but not browser friendly
-//3 - file exists but real file type does not match extension
+//3 - file exists, but the real file type does not match extension
 //4 - file missing
 
     $file = DIR_FS_CATALOG_IMAGES . $value['image'];
@@ -182,7 +182,7 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
         $error_count++;
     } elseif (file_exists($file)) {
         $image_check = getimagesize($file); // getimagesize returns 0 => height, 1 => width, and 2 => type.
-        $image_type = $image_check[2];//third element of array
+        $image_type = $image_check[2];//third element of the array
 
         //echo $results_info[$key]['image'] . ', $image_type=' . $image_type . '<br>';
 
@@ -191,9 +191,9 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
                 strrchr($file, '.'),
                 1
             )
-        );  // Retrieve the file extension, convert it to lower case.
+        );  // Retrieve the file extension, convert it to lowercase.
 
-//check image-naming (extensions) against actual file type
+//check image-naming (extensions) against the actual file type
         if (!$image_type) {//getimagesize does not recognise this as an image
             $results_info[$key]['error'] = sprintf(ERROR_NOT_IMAGE, $file_ext);
             $results_info[$key]['image_status'] = 3;
@@ -241,160 +241,20 @@ foreach ($results_info as $key => $value) {//add $results_info['image_status'] a
         $error_count++;
     }
     set_time_limit(30);
-// If you're not running PHP in Safe Mode, reset the timer to 30 seconds and start again. This is to allow for larger databases to be run. Will work on a better fix to this in a later update. Will likely involve a bit of refreshing and sending to the $_POST.
+// If you're not running PHP in Safe Mode, reset the timer to 30 seconds and start again.
+// This is to allow for larger databases to be parsed.
+// TODO: a better solution. Will likely involve a bit of refreshing and sending to the $_POST.
 }
-//echo __LINE__ . ': After Processing<pre>$results_info<br>';print_r($results_info);echo '</pre>';
-
 ?>
 <!doctype html>
-<html <?php
-echo HTML_PARAMS; ?>>
+<html <?= HTML_PARAMS ?>>
 <head>
     <?php
     require DIR_WS_INCLUDES . 'admin_html_head.php'; ?>
-    <script>
-        function init() {
-            cssjsmenu('navbar');
-            if (document.getElementById) {
-                var kill = document.getElementById('hoverJS');
-                kill.disabled = true;
-            }
-            alternate('resultsTable');//stripe the table rows
-        }
-/* this is only for backward compatibility - will be removed in future version */
-function cssjsmenu() {
-  viewport = document.querySelector("meta[name=viewport]");
-  if (viewport != undefined) {
-    viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=1');
-  } else {
-    var metaTag=document.createElement('meta');
-  metaTag.name = "viewport"
-    metaTag.content = "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=1"
-    document.getElementsByTagName('head')[0].appendChild(metaTag);
-  }
-}
-    </script>
 
-    <style>
-        #body {
-            padding: 0 1%;
-        }
-
-        #resultsTable {
-            width: 100%;
-            margin: auto;
-            /*border-collapse: collapse;*/
-            line-height: 1.7em;
-        }
-
-        #resultsTable th {
-            padding: 2px 2px 2px 18px;
-        }
-
-        #resultsTable th.minWidth {
-            white-space: nowrap;
-            width: 1%;
-        }
-
-        #resultsTable td {
-            padding: 2px 8px;
-        }
-
-        #resultsTable .tableHeading {
-            text-align: left;
-            font-weight: bold;
-            color: white;
-            background: black;
-        }
-
-        #resultsTable .rowEven {
-            background: white;
-        }
-
-        #resultsTable .rowOdd {
-            background: #EFEFEF;
-        }
-
-        #resultsTable .rowEven:hover, #resultsTable .rowOdd:hover {
-            background: #DADADA;
-        }
-
-        .valid {
-            /*padding: 0 0 0 50px;
-            color: #009900 !important;
-            font-weight: bold;*/
-        }
-
-        .mismatch, .uncommon { /*filetype not an image or not as per extension*/
-            background: khaki;
-            font-style: italic;
-        }
-
-        .undefined {
-            /*font-weight: bold;*/
-        }
-
-        .missing {
-            color: red;
-            font-weight: bold;
-        }
-
-        fieldset {
-            border: black thin solid;
-            padding: 0.35em;
-            display: inline-block;
-        }
-
-        legend {
-            font-size: 14px;
-            margin: 0;
-            width: auto;
-            border-style: none;
-        }
-
-        table.tablesorter .header,
-        table.tablesorter .tablesorter-header {
-            /* black double arrow */
-            background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==);
-            /* white double arrow */
-            /* background-image: url(data:image/gif;base64,R0lGODlhFQAJAIAAAP///////yH5BAEAAAEALAAAAAAVAAkAAAIXjI+AywnaYnhUMoqt3gZXPmVg94yJVQAAOw==); */
-            /* image */
-            /* background-image: url(black-bg.gif); */
-            background-repeat: no-repeat;
-            background-position: center left;
-            padding: 4px 20px 4px 4px;
-            cursor: pointer;
-        }
-
-        table.tablesorter th.headerSortUp,
-        table.tablesorter th.tablesorter-headerSortUp {
-            background-color: #8dbdd8;
-            /* black asc arrow */
-            background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7);
-            /* white asc arrow */
-            /* background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjB+gC+jP2ptn0WskLQA7); */
-            /* image */
-            /* background-image: url(black-asc.gif); */
-        }
-
-        table.tablesorter th.headerSortDown,
-        table.tablesorter th.tablesorter-headerSortDown {
-            background-color: #8dbdd8;
-            /* black desc arrow */
-            background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAACMtMP///yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7);
-            /* white desc arrow */
-            /* background-image: url(data:image/gif;base64,R0lGODlhFQAEAIAAAP///////yH5BAEAAAEALAAAAAAVAAQAAAINjI8Bya2wnINUMopZAQA7); */
-            /* image */
-            /* background-image: url(black-desc.gif); */
-        }
-
-        table.tablesorter tbody tr.alt-row td {
-            background-color: #E4E4E4;
-        }
-    </style>
 </head>
-<?php //TODO clean up the init and obsolete js?>
-<body onLoad="init()">
+
+<body>
 <!-- header //-->
 <?php
 require(DIR_WS_INCLUDES . 'header.php'); ?>
@@ -402,74 +262,56 @@ require(DIR_WS_INCLUDES . 'header.php'); ?>
 
 <!-- body //-->
 <div id="body">
-    <div><h1><?php
-            echo HEADING_TITLE; ?></h1>
-        <p><?php
-            echo TEXT_VERSION . IMAGE_CHECKER_VERSION; ?></p>
-        <?php
-        echo TEXT_IMAGES_DIRECTORY; ?>
+    <div><h1><?= HEADING_TITLE ?></h1>
+        <p><?= TEXT_VERSION . IMAGE_CHECKER_VERSION ?></p>
+        <?= TEXT_IMAGES_DIRECTORY ?>
         <?php
         if ($limit_search > 0) { ?>
-            <br><p class="messageStackError"><?php
-                echo '$limit_search=' . $limit_search; ?></p>
-        <?php
+            <br><p class="messageStackError"><?= '$limit_search=' . $limit_search ?></p>
+            <?php
         } ?>
     </div>
     <div>
-        <?php
-        echo TEXT_INTRO; ?>
-        <?php
-        echo zen_draw_form('options', FILENAME_IMAGE_CHECKER, zen_get_all_get_params(['listType', 'listAll', 'listDisabled', 'listNoImages']), 'get', 'id="options"'); ?>
+        <?= TEXT_INTRO ?>
+        <?= zen_draw_form('options', FILENAME_IMAGE_CHECKER, zen_get_all_get_params(['listType', 'listAll', 'listDisabled', 'listNoImages']), 'get', 'id="options"') ?>
         <fieldset>
-            <legend><?php
-                echo TEXT_LIST_TYPE; ?></legend>
-            <label for="listTypeCategories"><?php
-                echo TEXT_CATEGORIES; ?></label>
+            <legend><?= TEXT_LIST_TYPE ?></legend>
+            <label for="listTypeCategories"><?= TEXT_CATEGORIES; ?></label>
             <?php
             echo zen_draw_radio_field('listType', 'categories', $list_categories, '', 'id="listTypeCategories" onchange="this.form.submit();"'); ?>
-            <label for="listTypeProducts"><?php
-                echo TEXT_PRODUCTS; ?></label>
+            <label for="listTypeProducts"><?= TEXT_PRODUCTS ?></label>
             <?php
             echo zen_draw_radio_field('listType', 'products', $list_products, '', 'id="listTypeProducts" onchange="this.form.submit();"'); ?>
         </fieldset>
         <fieldset>
-            <legend><?php
-                echo TEXT_FILTERS; ?></legend>
-            <label for="listAll"><?php
-                echo TEXT_LIST_ALL; ?></label>
+            <legend><?= TEXT_FILTERS ?></legend>
+            <label for="listAll"><?= TEXT_LIST_ALL ?></label>
             <?php
             echo zen_draw_checkbox_field('listAll', '1', $list_all, '', 'id="listAll" onchange="this.form.submit();"'); ?>
             &nbsp;
             <?php
             if (!$list_all) {//do not show filter if listing all products anyway ?>
-                <label for="listDisabled"><?php
-                    echo TEXT_LIST_DISABLED; ?></label>
-                <?php
-                echo zen_draw_checkbox_field('listDisabled', '1', $list_disabled, '', 'id="listDisabled" onchange="this.form.submit();"'); ?>&nbsp;
-                <label for="listNoImages"><?php
-                    echo TEXT_LIST_NO_IMAGES; ?></label>
-                <?php
-                echo zen_draw_checkbox_field('listNoImages', '1', $list_no_images, '', 'id="listNoImages" onchange="this.form.submit();"');
+                <label for="listDisabled"><?= TEXT_LIST_DISABLED ?></label>
+                <?= zen_draw_checkbox_field('listDisabled', '1', $list_disabled, '', 'id="listDisabled" onchange="this.form.submit();"') ?>&nbsp;
+                <label for="listNoImages"><?= TEXT_LIST_NO_IMAGES ?></label>
+                <?php echo zen_draw_checkbox_field('listNoImages', '1', $list_no_images, '', 'id="listNoImages" onchange="this.form.submit();"');
             } ?>
             <!--
         <label for="limitResults">Limit search</label>
         <?php
             //echo zen_draw_input_field('limitSearch', $limit_search, ($limit_search ? 'class="messageStackCaution"' : ''), 'id="limitSearch" onblur="this.form.submit();"'); ?>-->
         </fieldset>
-        <?php
-        echo '</form>'; ?>
+        <?= '</form>' ?>
     </div>
 
     <?php
     if ($results->RecordCount() > 0) { ?>
-        <p><?php
-            echo sprintf(TEXT_RESULTS_COUNT, ($list_categories ? TEXT_CATEGORIES : TEXT_PRODUCTS), $results->RecordCount()); ?></p>
+        <p><?= sprintf(TEXT_RESULTS_COUNT, ($list_categories ? TEXT_CATEGORIES : TEXT_PRODUCTS), $results->RecordCount()) ?></p>
 
         <?php
         if ($list_all) { ?>
-            <div style="float: right">
-                <?php
-                echo $products_split->display_count(
+            <div style="float: right;">
+                <?php echo $products_split->display_count(
                     $sql_query_numrows,
                     MAX_DISPLAY_SEARCH_RESULTS,
                     $_GET['page'],
@@ -483,44 +325,31 @@ require(DIR_WS_INCLUDES . 'header.php'); ?>
                     zen_get_all_get_params(['page'])
                 ); ?>
             </div>
-        <?php
+            <?php
         }
 
         if ($error_count > 0 || $list_all) {
             ?>
-            <div><p class="missing"><?php
-                    echo TEXT_IMAGE_PROBLEMS . $error_count; ?></p></div>
+            <div><p class="missing"><?= TEXT_IMAGE_PROBLEMS . $error_count ?></p></div>
             <div>
                 <table id="resultsTable">
                     <thead>
                     <tr class="dataTableHeadingRow">
-                        <!--<th class="center minWidth"><?php
-                        //echo TABLE_HEADING_ENTRY; ?></th>-->
-                        <th class="center minWidth"><?php
-                            echo TABLE_HEADING_ID; ?></th>
-                        <th class="minWidth" colspan="2"><?php
-                            echo TABLE_HEADING_STATUS; ?></th>
+                        <th class="center minWidth"><?= TABLE_HEADING_ID ?></th>
+                        <th class="minWidth" colspan="2"><?= TABLE_HEADING_STATUS ?></th>
                         <?php
                         if ($list_products) { ?>
-                            <th class="minWidth"><?php
-                                echo TABLE_HEADING_MODEL; ?></th>
-                        <?php
+                            <th class="minWidth"><?= TABLE_HEADING_MODEL ?></th>
+                            <?php
                         } ?>
-                        <th><?php
-                            echo TABLE_HEADING_NAME; ?></th>
-                        <th><?php
-                            echo TABLE_HEADING_IMAGE; ?></th>
-                        <th><?php
-                            echo TABLE_HEADING_RESULT; ?></th>
+                        <th><?= TABLE_HEADING_NAME ?></th>
+                        <th><?= TABLE_HEADING_IMAGE ?></th>
+                        <th><?= TABLE_HEADING_RESULT ?></th>
                     </tr>
                     </thead>
                     <tbody>
                     <?php
-                    //echo __LINE__ . ': <pre>';echo print_r($results_info);echo '</pre>';
-
                     foreach ($results_info as $key => $value) {
-                        //echo __LINE__ . ': <pre>';echo print_r($results_info);echo '</pre>';
-
                         switch ($value['image_status']) {
                             case (0)://image found and extension matches type
                                 $errorclass = "valid";
@@ -541,69 +370,54 @@ require(DIR_WS_INCLUDES . 'header.php'); ?>
                                 $errorclass = "";
                         } ?>
 
-                        <tr class="dataTableRow" onmouseover="rowOverEffect(this)" onmouseout="rowOutEffect(this)">
-                            <!--<td class="center"><?php
-                            //echo $value['entry']; ?></td>-->
-                            <td class="center"><?php
-                                echo $value['id']; ?></td>
-                            <td class="center" style="padding-right: 0"><?php
-                                echo($value['status'] === '1' ?
-                                    zen_image(DIR_WS_IMAGES . 'icon_green_on.gif', IMAGE_ICON_STATUS_ON) :
-                                    zen_image(DIR_WS_IMAGES . 'icon_red_on.gif', IMAGE_ICON_STATUS_OFF))
-                                ?>
-                            </td>
-                            <td class="center" style="padding-left: 0">
-                                <?php
-                                if ($list_categories) {
-                                    //echo 'zen_get_path($value[\'id\']) ='.zen_get_path($value['id']).'<br>';
-                                    //echo 'zen_generate_category_path($value[\'id\']) ='; echo '<pre>'; print_r(zen_generate_category_path($value['id'])); echo '</pre>';
-                                    //echo 'zen_output_generated_category_path($value[\'id\']) ='.zen_output_generated_category_path($value['id']).'<br>';
-
-                                    $categories_path_array = zen_generate_category_path($value['id']);
-                                    $parent_cPath = $categories_path_array[0][0]['id'];
-
-                                    echo '<a href="' . zen_href_link(FILENAME_CATEGORIES, 'cPath=' . $parent_cPath . '&amp;cID=' . (int)$value['id']) . '&amp;action=edit_category" title="' . TEXT_EDIT_CATEGORY . '" target="_blank">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif', ICON_EDIT) . '</a>';
-                                } else { // is product
-                                    echo '<a href="' . zen_href_link(FILENAME_PRODUCT, 'cPath=' . zen_get_product_path((int)$value['id']) . '&amp;product_type=1&amp;pID=' . (int)$value['id']) . '&amp;action=new_product" title="' . TEXT_EDIT_PRODUCT . '" target="_blank">' . zen_image(
-                                            DIR_WS_IMAGES . 'icon_edit.gif',
-                                            ICON_EDIT
-                                        ) . '</a>';
-                                } ?>
-                            </td>
+                        <tr class="dataTableRow">
+                        <td class="center"><?= $value['id'] ?></td>
+                        <td class="center" style="padding-right: 0;"><?= ($value['status'] === '1' ?
+                                zen_image(DIR_WS_IMAGES . 'icon_green_on.gif', IMAGE_ICON_STATUS_ON) :
+                                zen_image(DIR_WS_IMAGES . 'icon_red_on.gif', IMAGE_ICON_STATUS_OFF))
+                            ?>
+                        </td>
+                        <td class="center" style="padding-left: 0;">
                             <?php
-                            if ($list_products) { ?>
-                                <td style="white-space: nowrap"><?php
-                                    echo $value['model']; ?></td>
-                            <?php
+                            if ($list_categories) {
+                                //echo 'zen_get_path($value[\'id\']) ='.zen_get_path($value['id']).'<br>';
+                                //echo 'zen_generate_category_path($value[\'id\']) ='; echo '<pre>'; print_r(zen_generate_category_path($value['id'])); echo '</pre>';
+                                //echo 'zen_output_generated_category_path($value[\'id\']) ='.zen_output_generated_category_path($value['id']).'<br>';
+
+                                $categories_path_array = zen_generate_category_path($value['id']);
+                                $parent_cPath = $categories_path_array[0][0]['id'];
+
+                                echo '<a href="' . zen_href_link(FILENAME_CATEGORIES, 'cPath=' . $parent_cPath . '&amp;cID=' . (int)$value['id']) . '&amp;action=edit_category" title="' . TEXT_EDIT_CATEGORY . '" target="_blank">' . zen_image(DIR_WS_IMAGES . 'icon_edit.gif', ICON_EDIT) . '</a>';
+                            } else { // is product
+                                echo '<a href="' . zen_href_link(FILENAME_PRODUCT, 'cPath=' . zen_get_product_path((int)$value['id']) . '&amp;product_type=1&amp;pID=' . (int)$value['id']) . '&amp;action=new_product" title="' . TEXT_EDIT_PRODUCT . '" target="_blank">' . zen_image(
+                                        DIR_WS_IMAGES . 'icon_edit.gif',
+                                        ICON_EDIT
+                                    ) . '</a>';
                             } ?>
-                            <td><?php
-                                if ($list_categories) {
-                                    echo zen_output_generated_category_path($value['id']) . '<br>';
-                                } else {
-                                    echo $value['name'];
-                                } ?>
-                            </td>
-                            <td><?php
-                                echo $value['image']; ?></td>
-                            <td class="<?php
-                            echo $errorclass; ?>"><?php
-                                echo $value['error']; ?></td>
+                        </td>
+                        <?php
+                        if ($list_products) { ?>
+                            <td style="white-space: nowrap;"><?= $value['model'] ?></td>
+                            <?php
+                        } ?>
+                        <td><?= ($list_categories ? zen_output_generated_category_path($value['id']) . '<br>':  $value['name']) ?></td>
+                        <td><?= $value['image'] ?></td>
+                        <td class="<?= $errorclass ?>"><?= $value['error'] ?></td>
                         </tr>
-                    <?php
+                        <?php
                     } ?>
                     </tbody>
                 </table>
             </div>
-        <?php
+            <?php
         }
         if ($error_count === 0) { ?>
-            <br><p class="messageStackSuccess"><?php
-                echo TEXT_NO_ERRORS_FOUND; ?></p>
-        <?php
+            <br><p class="messageStackSuccess"><?= TEXT_NO_ERRORS_FOUND ?></p>
+            <?php
         }
 
         if ($list_all) { ?>
-            <div style="float: right">
+            <div style="float: right;">
                 <?php
                 echo $products_split->display_count(
                     $sql_query_numrows,
@@ -619,7 +433,7 @@ require(DIR_WS_INCLUDES . 'header.php'); ?>
                     zen_get_all_get_params(['page'])
                 ); ?>
             </div>
-        <?php
+            <?php
         }
     } else {
         echo($list_categories ? TEXT_NO_CATEGORIES_FOUND : TEXT_NO_PRODUCTS_FOUND);
@@ -627,32 +441,8 @@ require(DIR_WS_INCLUDES . 'header.php'); ?>
 </div>
 <!-- body_eof //-->
 <!-- footer //-->
-<?php
-require(DIR_WS_INCLUDES . 'footer.php'); ?>
+<?php require(DIR_WS_INCLUDES . 'footer.php'); ?>
 <!-- footer_eof //-->
-<script src="includes/javascript/jquery.tablesorter.js"></script>
-<script>$(document).ready(function () {
-        $("table").tablesorter();
-        //$("table").tablesorter({widgets: ["zebra"], widgetOptions: {zebra: ["normal-row", "alt-row"]}});//for striping, but not working with default mouseover highlighting
-    });
-</script>
-<script>
-    function alternate(id) {
-        if (document.getElementById(id)) {
-            let table = document.getElementById(id);
-            let rows = table.getElementsByTagName("tr");
-            for (let i = 1; i < rows.length; i++) {
-                //manipulate rows
-                if (i % 2 === 0) {
-                    rows[i].className = "rowEven";
-                } else {
-                    rows[i].className = "rowOdd";
-                }
-            }
-        }
-    }
-</script>
 </body>
 </html>
-<?php
-require(DIR_WS_INCLUDES . 'application_bottom.php'); ?>
+<?php require(DIR_WS_INCLUDES . 'application_bottom.php'); ?>
