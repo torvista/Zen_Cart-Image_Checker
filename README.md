@@ -4,18 +4,21 @@
 Checks 
 - that the images linked to the products in the database exist
 - that the format of the linked image corresponds with its filename extension
-- that the format is a jpg/gif/bmp/png and not some other less common web format
+- that the format is a bmp/gif/jpg/png/webp and not some other less common web format
 
 ## Compatibility
-Compatible up to and including Zen Cart 2, php8.
+Compatible from Zen Cart 1.57-2.10, on php8.  
+Version 2.3.0 03/08/2025  
+
+Note further minor tweaks and fixes may be posted on the GitHub repository.
 
 ## Admin core files modified?
 No.
 
 ## Database Modifications?
 
-Yes: for the registration of the admin page.
-No: no product data is modified, the script is read-only.
+Yes: only for the registration of the admin page.
+No product data is modified, the script is read-only.
 
 ## Support thread for Missing Images/Image Checker
 http://www.zen-cart.com/showthread.php?213966
@@ -28,7 +31,8 @@ Installation of this contribution is done at your own risk.
 Whilst there are no changes made to your database or core files, it is still best practice to install ANY so-called "Plugin" on a DEVELOPMENT server before letting it loose on a production shop.
 
 ## License
-You should have received a copy of the GNU General Public License along with this program.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License along with this program.  
+If not, see <http://www.gnu.org/licenses/>.
 
 ## Installation
 1) Try this (as with ANY plugins/modifications) on your DEVELOPMENT SERVER first. Trust no-one!
@@ -36,23 +40,31 @@ You should have received a copy of the GNU General Public License along with thi
 1) Copy the CONTENTS of the "zc_plugins" folder to your "zc_plugins" folder. There should be no overwrites.
 1) Admin->Modules->Plugin Modules->Image Checker->Install
 
+Note that this includes jquery_tablesorter 2.32.0 from  
+https://mottie.github.io/tablesorter/docs/  
+to allow sorting by the column headings and some table formatting.
+
 ## Use
 Open the Tools->Image Checker page  
-It will run the tool immediately (and so will take a few seconds),  and will show only the errors it finds for ENABLED products. The error count is the total of all the products.
+Click on Go to run the check with the default filters.
+It will show only the errors it finds for ENABLED products. The error count is the total of all the products.
 
 To include disabled products in the list, select the checkbox and the page will refresh.
 
 To show all products, select the checkbox and the page will refresh using the pagination defined by the Admin->Maximum values page.  The error count is for that page only.
 
 ## Known Issues
-People on shared servers or those without the ability to turn Safe Mode off will experience more time-outs on larger databases. This is because the script cannot reset the execution_timer.
+People on shared servers or those without the ability to turn Safe Mode off may experience more time-outs on larger databases.  
+This is because the script cannot reset the execution_timer.
 
 ## Uninstall
-
 1) Admin->Modules->Plugin Modules->Image Checker->Uninstall
 1) Remove files from zc_plugin.
 
 ## History - Changelog
+2025 08 03 torvista:  
+added webp, Go button, removed some language constants already available in core files, added all tablesorter files for easier upgrading.
+
 2024 08 25 v2.3.0 torvista:  
 converted to an encapsulated plugin  
 replaced <?php echo with <?=  
@@ -85,7 +97,6 @@ v1.0 as Image Checker 2016 08
 	changed listing format
 	added edit button to product
 
-	===================================
 Previous history as Missing Images
 Github Zen4All
 https://github.com/Zen4All/missing-images-zen

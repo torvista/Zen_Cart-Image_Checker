@@ -1,5 +1,8 @@
-/*
- * css for Image Checker
+/**
+ * Plugin: Image Checker
+ * @link https://github.com/torvista/Zen_Cart-Image_Checker
+ * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
+ * @updated 03 August 2025 torvista
  */
 
         #body {
@@ -117,4 +120,3 @@
         table.tablesorter tbody tr.alt-row td {
             background-color: #E4E4E4;
         }
-
