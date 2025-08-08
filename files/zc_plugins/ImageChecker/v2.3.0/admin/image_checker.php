@@ -337,7 +337,7 @@ require(DIR_WS_INCLUDES . 'header.php'); ?>
 
     <?php
     if (isset($results) && $results->RecordCount() > 0) { ?>
-        <p><?= sprintf(TEXT_RESULTS_COUNT, ($list_categories ? TEXT_CATEGORIES : TEXT_PRODUCTS), $results->RecordCount()) ?></p>
+        <p><?= sprintf(TEXT_RESULTS_COUNT, $list_categories ? TEXT_CATEGORIES : TEXT_PRODUCTS, $sql_query_numrows ?? $results->RecordCount()) ?></p>
 
         <?php
         if ($list_all) { ?>
