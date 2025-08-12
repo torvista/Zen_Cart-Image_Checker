@@ -6,38 +6,18 @@ declare(strict_types=1);
  * Plugin: Image Checker
  * @link https://github.com/torvista/Zen_Cart-Image_Checker
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @updated 03 August 2025 torvista
+ * @updated 11 August 2025 torvista
  */
 
 /** directives for phpStorm code inspector
  ** @var queryFactory $db
  */
 
+//for faster debugging: restrict the search to use a smaller result set
+$limit_search = 0; // Integer or 0 for normal operation. Ignored when Show All is selected
+
 const IMAGE_CHECKER_VERSION = '2.3.0';
 
-//for faster debugging: restrict the search to use a smaller result set
-$limit_search = 0; // Integer or 0 for normal operation. Ignored when list all selected
-
-/* originally based on
- * Missing Images Checker for ZenCart
- * By Paul Williams (retched) with additions by Zen4All
- *...but radically butchered by torvista
- */
-
-// This file reads the image link path associated with each product and
-// a) checks if anything is defined
-// b) if defined, checks if the file referenced exists, if it is an image, if it is named correctly, and if it is a common file type.
-//
-// The script reports any discrepancies.
-// To get the most of this file, you should disable PHP's safe mode as this file
-// may take an excessively long time if you're running this script on a LARGE
-// database. Large being anywhere near 2000 or more products. In addition,
-// you should also probably run this on a dedicated server or a local testing
-// server as opposed to online.
-//
-// Also note that **NO CHANGES ARE MADE TO YOUR DATABASE**. This script is read-only.
-
-//////////////////////////////////////////////////////////////
 require('includes/application_top.php');
 
 $allowed_image_types = [
@@ -97,36 +77,35 @@ $getimagesize_types = [
     19 => ' AVIF',
     20 => 'COUNT'
 ];
-// get the value of checkbox to show all products or only those with image issues
-//echo '$_GET[\'listAllProducts\']=' . $_GET['listAllProducts'] . '<br>';
-//echo '$_POST[\'listAllProducts\']=' . $_POST['listAllProducts'] . '<br>';
-
+// parse categories or products
 $list_categories = ((isset($_GET['listType']) && $_GET['listType'] === 'categories'));
-//$list_categories = false;//override
 $list_products = !$list_categories;
 
+// show all results (ok/not ok)
 $list_all = isset($_GET['listAll']);
-//$list_all = true;//override
 
-// get the value of checkbox to show disabled products too (if not a full listing)
+// show disabled products too (if not a full listing)
 $list_disabled = isset($_GET['listDisabled']);
 
-// get the value of checkbox to show disabled products too (if not a full listing)
+// show products with no images defined (if not a full listing)
 $list_no_images = isset($_GET['listNoImages']);
 
-// parse the database and images
+// do parsing
 $process = !empty($_GET['process']);
+
 if ($process) {
 //echo __LINE__ . ': $list_categories=' . $list_categories . ', $list_products=' . $list_products . ', $list_all=' . $list_all . ', $list_disabled=' . $list_disabled . ', $list_no_images=' . $list_no_images . '<br>';
     $list_disabled_clause = '';
     $list_no_images_clause = '';
 
-    if ($list_products && !$list_all) { // products: filter by product status=1
+    // products: filter by product status=1
+    if ($list_products && !$list_all) {
         $list_disabled_clause = ($list_disabled ? '' : ' AND p.products_status = 1');//if checkbox ticked, no filter
         $list_no_images_clause = ($list_no_images ? '' : ' AND p.products_image >""');//if checkbox ticked, no filter
     }
 
-    if ($list_categories && !$list_all) {//if only errors selected, allow filtering by product status
+    // if only errors selected, allow filtering by product status
+    if ($list_categories && !$list_all) {
         $list_disabled_clause = ($list_disabled ? '' : ' AND c.categories_status = 1');//if checkbox ticked, no filter
         $list_no_images_clause = ($list_no_images ? '' : ' AND c.categories_image >""');//if checkbox ticked, no filter
     }
@@ -144,7 +123,8 @@ if ($process) {
                  WHERE pd.language_id = " . (int)$_SESSION['languages_id'] . $list_disabled_clause . $list_no_images_clause . " ORDER BY p.products_model" . $limit_clause;
     }
 
-    if ($list_all) { // no filtering/show all results
+    // no filtering/show all results
+    if ($list_all) {
         $limit_clause = '';//for debugging only, remove for split page results, which adds its own limit
         if (isset($_GET['page']) && ($_GET['page'] > 1)) {
             $rows = ((int)$_GET['page'] * MAX_DISPLAY_SEARCH_RESULTS) - MAX_DISPLAY_SEARCH_RESULTS;// todo $rows????
@@ -163,7 +143,6 @@ if ($process) {
             $results_info[] = [
                 // "entry" => $results_counter,
                 "id" => $result['categories_id'],
-                //"model" => $result['products_model'],
                 "image" => $result['categories_image'],
                 "status" => $result['categories_status'],
                 "name" => $result['categories_name']
@@ -183,7 +162,6 @@ if ($process) {
         }
     }
 
-//echo __LINE__ . ': Before Processing<pre>$results_info<br>';mv_printVar($results_info);
     /*
     * iterate over each product:
      *      1. Determine if the file exists. (file_exists($file_path))
@@ -192,11 +170,10 @@ if ($process) {
      *      3. Determine if the image is stored in the correct format. (An image with
      *         a .PNG should register as a PNG.)
      */
-//echo __LINE__ . ' <pre>$results_info';print_r($results_info);echo '</pre><hr />';
 
     $error_count = 0;
-    foreach ($results_info as $key => $value) {//add $results_info['image_status'] and $results_info['error'] into array
-        //echo __LINE__ . ': In Processing<pre>$value<br>';print_r($value);echo '</pre>';
+    //add $results_info['image_status'] and $results_info['error'] into array
+    foreach ($results_info as $key => $value) {
 
 //$results_info['image_status']
 //0 - file exists and is good
@@ -215,16 +192,15 @@ if ($process) {
             $image_check = getimagesize($file); // getimagesize returns 0 => height, 1 => width, and 2 => type.
             $image_type = $image_check[2];//third element of the array
 
-            //echo $results_info[$key]['image'] . ', $image_type=' . $image_type . '<br>';
-
             $file_ext = strtolower(
                 substr(
                     strrchr($file, '.'),
                     1
                 )
-            );  // Retrieve the file extension, convert it to lowercase.
+            );
 
-//check image-naming (extensions) against the actual file type
+            //check image-naming (extensions) against the actual file type
+            //TODO improve this section
             if (!$image_type) {//getimagesize does not recognise this as an image
                 $results_info[$key]['error'] = sprintf(ERROR_NOT_IMAGE, $file_ext);
                 $results_info[$key]['image_status'] = 3;
@@ -369,11 +345,7 @@ require(DIR_WS_INCLUDES . 'header.php'); ?>
                     <tr class="dataTableHeadingRow">
                         <th class="center minWidth"><?= TABLE_HEADING_ID ?></th>
                         <th class="minWidth" colspan="2"><?= TABLE_HEADING_STATUS ?></th>
-                        <?php
-                        if ($list_products) { ?>
-                            <th class="minWidth"><?= TABLE_HEADING_MODEL ?></th>
-                            <?php
-                        } ?>
+                        <?php echo ($list_products ? '<th class="minWidth">' . TABLE_HEADING_MODEL . '</th>' : ''); ?>
                         <th><?= TABLE_HEADING_NAME ?></th>
                         <th><?= TABLE_HEADING_IMAGE ?></th>
                         <th><?= TABLE_HEADING_RESULT ?></th>
@@ -412,10 +384,6 @@ require(DIR_WS_INCLUDES . 'header.php'); ?>
                             <td class="center" style="padding-left: 0;">
                                 <?php
                                 if ($list_categories) {
-                                    //echo 'zen_get_path($value[\'id\']) ='.zen_get_path($value['id']).'<br>';
-                                    //echo 'zen_generate_category_path($value[\'id\']) ='; echo '<pre>'; print_r(zen_generate_category_path($value['id'])); echo '</pre>';
-                                    //echo 'zen_output_generated_category_path($value[\'id\']) ='.zen_output_generated_category_path($value['id']).'<br>';
-
                                     $categories_path_array = zen_generate_category_path($value['id']);
                                     $parent_cPath = $categories_path_array[0][0]['id'];
 
