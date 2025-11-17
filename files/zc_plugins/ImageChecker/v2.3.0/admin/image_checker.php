@@ -192,12 +192,8 @@ if ($process) {
             $image_check = getimagesize($file); // getimagesize returns 0 => height, 1 => width, and 2 => type.
             $image_type = $image_check[2];//third element of the array
 
-            $file_ext = strtolower(
-                substr(
-                    strrchr($file, '.'),
-                    1
-                )
-            );
+            $inter_step = explode('.',$file); // I hate this extra step but end throws a var should be passed by ref warning
+            $file_ext = strtolower(end($inter_step));
 
             //check image-naming (extensions) against the actual file type
             //TODO improve this section
