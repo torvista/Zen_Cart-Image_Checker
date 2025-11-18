@@ -6,7 +6,7 @@ declare(strict_types=1);
  * Plugin: Image Checker
  * @link https://github.com/torvista/Zen_Cart-Image_Checker
  * @license http://www.zen-cart.com/license/2_0.txt GNU Public License V2.0
- * @updated 11 August 2025 torvista
+ * @updated 18 November 2025 torvista
  */
 
 /** directives for phpStorm code inspector
@@ -81,7 +81,7 @@ $getimagesize_types = [
 $list_categories = ((isset($_GET['listType']) && $_GET['listType'] === 'categories'));
 $list_products = !$list_categories;
 
-// show all results (ok/not ok)
+// show all results (OK/not OK)
 $list_all = isset($_GET['listAll']);
 
 // show disabled products too (if not a full listing)
@@ -173,6 +173,9 @@ if ($process) {
 
     $error_count = 0;
     //add $results_info['image_status'] and $results_info['error'] into array
+   //debugging
+    $display_time = false;
+   if ($display_time) $time_start = microtime(true);
     foreach ($results_info as $key => $value) {
 
 //$results_info['image_status']
@@ -192,12 +195,7 @@ if ($process) {
             $image_check = getimagesize($file); // getimagesize returns 0 => height, 1 => width, and 2 => type.
             $image_type = $image_check[2];//third element of the array
 
-            $file_ext = strtolower(
-                substr(
-                    strrchr($file, '.'),
-                    1
-                )
-            );
+            $file_ext = pathinfo($file, PATHINFO_EXTENSION);
 
             //check image-naming (extensions) against the actual file type
             //TODO improve this section
@@ -246,6 +244,10 @@ if ($process) {
 // If you're not running PHP in Safe Mode, reset the timer to 30 seconds and start again.
 // This is to allow for larger databases to be parsed.
 // TODO: a better solution. Will likely involve a bit of refreshing and sending to the $_POST.
+    }
+    if ($display_time) {
+        $time_end = microtime(true);
+        $messageStack->add('query time = ' . $time_end-$time_start . ' msec', 'success');
     }
 }
 ?>
